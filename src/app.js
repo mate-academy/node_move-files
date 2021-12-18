@@ -1,21 +1,23 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+/* eslint-disable no-console */
 
-module.exports = sum;
+const fs = require('fs');
+
+const [source, destination] = process.argv.slice(2);
+
+const sourceContent = fs.readFileSync(source, {encoding: 'utf8'});
+
+fs.writeFile(destination, sourceContent, (error, data) => {
+  if (error) {
+    throw error;
+  }
+
+  fs.unlink(source, (errorUnlink) => {
+    if (errorUnlink) {
+      throw errorUnlink;
+    }
+
+    console.log('File moved');
+  });
+});
