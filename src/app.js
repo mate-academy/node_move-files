@@ -1,21 +1,32 @@
+/* eslint-disable no-console */
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+const copy = require('./copy');
+
+const fileName = process.argv[2];
+const destination = process.argv[3];
+const explicitDirCheck = destination[destination.length - 1] === '/';
+const implicitDirCheck = fs.existsSync(`src/${destination}`);
+const successMessage = 'File was moved successfully';
+
+if (explicitDirCheck || implicitDirCheck) {
+  const data = copy(fileName);
+  const newPath = explicitDirCheck
+    ? `src/${destination}${fileName}`
+    : `src/${destination}/${fileName}`;
+
+  fs.writeFileSync(newPath, data);
+  fs.rmSync(`src/${fileName}`);
+  console.log(successMessage);
+
+  return;
 }
 
-module.exports = sum;
+fs.rename(`src/${fileName}`, `src/${destination}`, (error) => {
+  if (error) {
+    throw error;
+  }
+
+  console.log(successMessage);
+});
