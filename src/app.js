@@ -1,21 +1,30 @@
+/* eslint-disable no-console */
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+
+const src = process.argv[2];
+let dest = process.argv[3];
+
+if (src === dest) {
+  console.log('No changes');
+  process.exit();
 }
 
-module.exports = sum;
+if (!dest.includes('.') && !dest.includes('/')) {
+  dest = dest + '/' + src;
+} else if (dest[dest.length - 1] === '/') {
+  dest = dest + src;
+} else {
+  dest = dest + src.slice(src.lastIndexOf('.'));
+}
+
+fs.copyFile(src, dest, (err) => {
+  if (err) throw err;
+
+  fs.rm(src, (err) => {
+    if (err) throw err;
+
+    console.log('Completed');
+  })
+});
