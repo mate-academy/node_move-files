@@ -1,21 +1,44 @@
 'use strict';
+/* eslint-disable no-console */
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const fs = require('fs');
+const [command, source, destination] = process.argv.slice(2);
+let toPath = destination;
 
-module.exports = sum;
+fs.stat(source, (error, stats) => {
+  if (error) {
+    throw error;
+  }
+
+  if (!stats.isFile()) {
+    console.log(`\n ${source}: There is no such file!!! \n`);
+
+    return;
+  }
+
+  if (stats.isFile()) {
+    if (toPath[toPath.length - 1] === '/') {
+      toPath += [...source.split('/')].pop();
+    }
+
+    if (toPath[toPath.length - 1] !== '/' && fs.existsSync(toPath)) {
+      toPath += '/' + [...source.split('/')].pop();
+    }
+
+    moveFile(command, source, toPath);
+  }
+});
+
+const moveFile = function(operation, fromPath, toDir) {
+  if (operation !== 'mv') {
+    throw Error(`${operation}: is not move command, use 'mv'`);
+  }
+
+  fs.rename(fromPath, toDir, (err) => {
+    if (err) {
+      console.log(err);
+    }
+
+    console.log('Complete!');
+  });
+};
