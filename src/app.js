@@ -1,21 +1,48 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const fs = require('fs');
 
-module.exports = sum;
+const [outputFile, location] = process.argv.slice(2);
+
+fs.stat(location, (statErr, stats) => {
+  if (statErr && statErr.code === 'ENOENT') {
+    // handles simple renaming of the file
+    // && moving to existing directory with new filename
+    fs.rename(outputFile, location, (renameErr) => {
+      if (renameErr) {
+        // eslint-disable-next-line
+        console.log(`Such directory ('${location}') does not exist!`);
+
+        return;
+      }
+
+      // eslint-disable-next-line
+       console.log(`File ${outputFile} was succesfully renamed/moved to ${location}!`);
+    });
+
+    return;
+  }
+
+  if (stats.isDirectory()) {
+    // handles cases when one word is passed (like src)
+    fs.copyFile(outputFile, `${location}/${outputFile}`, (copyErr) => {
+      if (copyErr) {
+        // eslint-disable-next-line
+        console.log(copyErr);
+
+        return;
+      }
+
+      // deletes the original file when it's copied to a new location
+      fs.unlink(outputFile, (unlinkErr) => {
+        if (unlinkErr) {
+          // eslint-disable-next-line
+          console.log(unlinkErr);
+        }
+      });
+
+      // eslint-disable-next-line
+      console.log(`File ${outputFile} was succesfully copied to ${location}/${outputFile}!`);
+    });
+  }
+});
