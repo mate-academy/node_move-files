@@ -11,7 +11,7 @@ fs.stat(location, (statErr, stats) => {
     fs.rename(outputFile, location, (renameErr) => {
       if (renameErr) {
         // eslint-disable-next-line
-        console.log(`Such directory ('${location}') does not exists!`);
+        console.log(`Such directory ('${location}') does not exist!`);
 
         return;
       }
