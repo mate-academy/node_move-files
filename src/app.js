@@ -1,21 +1,30 @@
+/* eslint-disable no-console */
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const fs = require('fs');
 
-module.exports = sum;
+const args = process.argv.slice(2);
+const currentLocation = args[0];
+let newLocation = args[1];
+const endsWithSlash = newLocation[newLocation.length - 1] === '/';
+const fileName = currentLocation.split('/').pop();
+
+fs.stat(newLocation, (error, stats) => {
+  if (error && error.code === 'ENOENT' && endsWithSlash) {
+    throw Error('This directory doesn\'t exist');
+  }
+
+  if (!error && stats.isDirectory()) {
+    newLocation = `${newLocation}${endsWithSlash ? '' : '/'}${fileName}`;
+  }
+
+  rename(currentLocation, newLocation);
+});
+
+const rename = (currentPath, newPath) => {
+  fs.rename(currentPath, newPath, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+};
