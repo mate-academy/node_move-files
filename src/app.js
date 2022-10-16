@@ -1,21 +1,44 @@
+/* eslint-disable no-console */
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+
+// eslint-disable-next-line prefer-const
+let [prevPath, newPath] = process.argv.slice(2);
+
+if (prevPath === newPath) {
+  console.log('Error: You trying to move file to the same location.');
+
+  return;
 }
 
-module.exports = sum;
+if (newPath.charAt(newPath.length - 1) === '/') {
+  const prevDir = prevPath.split('/');
+  const fileName = prevDir[prevDir.length - 1];
+
+  newPath = newPath + fileName;
+}
+
+fs.readFile(prevPath, 'utf-8', (err, data) => {
+  if (err) {
+    console.log(err);
+
+    return;
+  }
+
+  fs.writeFile(newPath, data, 'utf-8', (err2) => {
+    if (err2) {
+      console.log(err2);
+    }
+  });
+});
+
+fs.unlink(prevPath, (err2) => {
+  if (err2) {
+    console.log(err2);
+
+    return;
+  }
+
+  console.log('File has been moved to a new location.');
+});
