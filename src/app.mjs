@@ -11,18 +11,14 @@ import fs from 'fs';
     target += '/' + source;
     action = 'moved';
   } else if (target.endsWith('/')) {
-    if (!exists(target)) {
-      return;
-    }
+    if (!exists(target)) return;
 
     target += source;
     action = 'moved';
   } else if (target.startsWith('./') && target.split('/').length >= 3) {
     const folderName = target.split('/').slice(1, -1).join('/');
 
-    if (!exists(folderName)) {
-      return;
-    }
+    if (!exists(folderName)) return;
 
     action = 'moved';
   }
