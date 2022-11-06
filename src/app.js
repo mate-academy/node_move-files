@@ -9,6 +9,13 @@ const mv = (fileToMove, dest) => {
 
     fs.writeFileSync(path.join(__dirname, dest), file, 'utf-8');
 
+    // fs.copyFile(path.join(__dirname, fileToMove)
+    //   , path.join(__dirname, dest), err => {
+    //     if (err) {
+    //       throw new Error(err);
+    //     }
+    //   });
+
     fs.rm(path.join(__dirname, fileToMove), err => {
       if (err) {
         throw new Error(err);
@@ -19,6 +26,6 @@ const mv = (fileToMove, dest) => {
   }
 };
 
-mv('./test/file.txt', './test/folder/new_name.txt');
+mv('./test/file.txt', './test/folder/file.txt');
 
 module.exports = { mv };
