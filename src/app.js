@@ -1,21 +1,21 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const mv = require('mv');
+const [path, newPath] = process.argv.slice(2);
+
+const splittedPath = path.split('/');
+const splittedNewPath = newPath.split('/');
+
+let fixedPath = newPath;
+
+if (splittedNewPath.length) {
+  if (splittedNewPath[splittedNewPath.length - 1].length === 0) {
+    fixedPath = newPath + splittedPath[splittedPath.length - 1];
+  }
 }
 
-module.exports = sum;
+mv(`./${path}`, `./${fixedPath}`, (error) => {
+  if (error) {
+    console.log(error);
+  }
+});
