@@ -1,21 +1,15 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const { validation } = require('./validation.js');
+
+function copyFiles(from, to) {
+  return validation(from, to);
 }
 
-module.exports = sum;
+const request = process.argv.slice(2);
+const pathFrom = request[0];
+const pathTo = request[1];
+
+copyFiles(pathFrom, pathTo);
+
+module.exports = { copyFiles };
