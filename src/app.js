@@ -3,48 +3,61 @@
 const fs = require('fs');
 
 const file = process.argv[2];
-const dest = process.argv[3];
-let destDir = dest;
-let destFile = '';
-let checked = false;
+const destination = process.argv[3];
+let destinationDir = destination;
+let destinationFile = '';
 
-function setDestAsFile() {
-  destDir = './';
-  destFile = dest;
-}
+function normalizeUrl() {
+  let checked = false;
 
-if (!dest.endsWith('/')) {
-  if (dest.includes('/')) {
-    const splitedDest = dest.split('/');
+  function setDestinationAsFile() {
+    destinationDir = './';
+    destinationFile = destination;
+  }
 
-    destDir = splitedDest.slice(0, -1).join('/') + '/';
-    destFile = splitedDest[splitedDest.length - 1];
-  } else if (dest.includes('.')) {
-    setDestAsFile();
+  if (destination.endsWith('/')) {
+    return;
+  }
+
+  if (destination.includes('/')) {
+    const splitedDestination = destination.split('/');
+
+    destinationDir = splitedDestination.slice(0, -1).join('/') + '/';
+    destinationFile = splitedDestination[splitedDestination.length - 1];
+
+    return;
+  }
+
+  if (destination.includes('.')) {
+    setDestinationAsFile();
     checked = true;
-  } else {
-    checked = true;
 
+    return;
+  }
+
+  checked = true;
+
+  try {
+    if (fs.statSync(destination).isDirectory()) {
+      destinationDir = `./${destination}/`;
+    }
+  } catch (_err) {
+    setDestinationAsFile();
+  }
+
+  if (!checked) {
     try {
-      if (fs.statSync(dest).isDirectory()) {
-        destDir = `./${dest}/`;
-      }
-    } catch (_err) {
-      setDestAsFile();
+      fs.statSync(destinationDir);
+    } catch (err) {
+      throw new Error('no such directory', err);
     }
   }
-}
 
-if (!checked) {
-  try {
-    fs.statSync(destDir);
-  } catch (err) {
-    throw new Error('no such directory', err);
+  if (!destinationFile) {
+    destinationFile = file;
   }
 }
 
-if (!destFile) {
-  destFile = file;
-}
+normalizeUrl();
 
-fs.renameSync(file, destDir + destFile);
+fs.renameSync(file, destinationDir + destinationFile);
