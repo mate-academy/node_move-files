@@ -3,24 +3,25 @@
 const fs = require('fs');
 
 const [ file, folder ] = [...process.argv.slice(3)];
+const path = folder + '/' + file;
 
 if (folder[folder.length - 1] !== '/') {
   throw new Error('The name of destination directory should be ended with /');
 }
 
-fs.readFile(file, (err, content) => {
-  if (err) {
-    throw err;
+fs.readFile(file, (readFileErr, content) => {
+  if (readFileErr) {
+    throw readFileErr;
   }
 
-  fs.writeFile(folder + '/' + file, content, (err1) => {
-    if (err1) {
-      throw err1;
+  fs.writeFile(path, content, (writeFileErr) => {
+    if (writeFileErr) {
+      throw writeFileErr;
     }
 
-    fs.unlink(file, (err2) => {
-      if (err2) {
-        throw err2;
+    fs.unlink(file, (unlinkErr) => {
+      if (unlinkErr) {
+        throw unlinkErr;
       }
 
       // eslint-disable-next-line no-console
