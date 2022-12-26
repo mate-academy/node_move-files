@@ -8,16 +8,11 @@ fs.stat(path, (statErr, stats) => {
   if (statErr && statErr.code === 'ENOENT') {
     fs.rename(currentFile, path, (renameErr) => {
       if (renameErr) {
-        // eslint-disable-next-line no-console
-        console.log(`Such directory '${path}' does not exist.`);
-
-        return;
+        throw Error(`Such directory '${path}' does not exist.`);
       }
-
-      // eslint-disable-next-line no-console
-      console.log(
-        // eslint-disable-next-line max-len
-        `The file '${currentFile}' was successfully renamed and moved to the '${path}' directory.`
+      throw Error(
+        `The file '${currentFile}' was successfully
+         renamed and moved to the '${path}' directory.`
       );
     });
 
@@ -27,23 +22,17 @@ fs.stat(path, (statErr, stats) => {
   if (stats.isDirectory()) {
     fs.copyFile(currentFile, `${path}/${currentFile}`, (copyErr) => {
       if (copyErr) {
-        // eslint-disable-next-line no-console
-        console.log(copyErr);
-
-        return;
+        throw copyErr;
       }
 
       fs.unlink(currentFile, (unlinkErr) => {
         if (unlinkErr) {
-          // eslint-disable-next-line no-console
-          console.log(unlinkErr);
+          throw unlinkErr;
         }
       });
-
-      // eslint-disable-next-line no-console
-      console.log(
-        // eslint-disable-next-line max-len
-        `The file '${currentFile}' was successfully copied to '${path}/${currentFile}'.`
+      throw Error(
+        `The file '${currentFile}' was successfully
+         copied to '${path}/${currentFile}'.`
       );
     });
   }
