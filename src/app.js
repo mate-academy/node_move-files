@@ -1,15 +1,33 @@
 'use strict';
+/* eslint-disable no-console */
 
 const fs = require('fs');
 const path = require('path');
 
-const [enteredSourcePath, enteredPath] = process.argv.slice(2);
+const getParsedArgv = () => {
+  const [enteredSourcePath, enteredDestinationPath] = process.argv.slice(2);
+  const basePath = path.resolve(__dirname, '../');
 
-const resolvedPath = path.resolve(__dirname, '../', enteredPath);
+  const resolvedDestinationPath = path
+    .resolve(basePath, enteredDestinationPath);
+  const resolvedSourcePath = path.resolve(basePath, enteredSourcePath);
 
-const resolvedSourcePath = path.resolve(__dirname, '../', enteredSourcePath);
-const fileName = enteredSourcePath.split('/').slice(-1);
+  const baseName = path.basename(enteredSourcePath);
 
+  return {
+    sourcePath: resolvedSourcePath,
+    destinationPath: resolvedDestinationPath,
+    fileName: baseName,
+  };
+}
+
+const getStats = (pathToGetStats) => {
+  try {
+    return fs.statSync(pathToGetStats);
+  } catch (_error) {
+    console.info('Invalid path entered. Trying to rename file...');
+  }
+}
 
 const moveFile = (sourceFilePath, destinationFilePath) => {
   try {
@@ -27,15 +45,6 @@ const moveFile = (sourceFilePath, destinationFilePath) => {
   console.info('File successfully moved');
 }
 
-const getStats = (path) => {
-  try {
-    const stats = fs.statSync(path);
-    return stats;
-  } catch (_e) {
-    console.info('Invalid path entered. Trying to rename file...');
-  }
-}
-
 const renameFile = (fileToRename, newFileName) => {
   try {
     fs.renameSync(fileToRename, newFileName);
@@ -46,12 +55,17 @@ const renameFile = (fileToRename, newFileName) => {
   console.info('File successfully renamed');
 }
 
-const stats = getStats(resolvedPath);
+const main = () => {
+  const { sourcePath, destinationPath, fileName } = getParsedArgv(); 
+  const stats = getStats(destinationPath);
 
-if (stats && stats.isDirectory()) {
-  moveFile(resolvedSourcePath, `${resolvedPath}/${fileName}`)
-} else if (enteredPath.slice(-1) === '/') {
-  throw new Error('Invalid destination path')
-} else {
-  renameFile(resolvedSourcePath, `${resolvedPath}`)
+  if (stats && stats.isDirectory()) {
+    moveFile(sourcePath, `${destinationPath}/${fileName}`)
+  } else if (destinationPath.endsWith('/')) {
+    throw new Error('Invalid destination path')
+  } else {
+    renameFile(sourcePath, `${destinationPath}`)
+  }
 }
+
+main();
