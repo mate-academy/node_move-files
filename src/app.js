@@ -1,21 +1,27 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+const { rename, exists, getFolderName } = require('./utils.js');
+
+function mv() {
+  const source = process.argv[2];
+  let target = process.argv[3];
+
+  if (!exists(source)) {
+    return;
+  }
+
+  if (fs.existsSync(target) && fs.lstatSync(target).isDirectory()) {
+    target += target.endsWith('/') ? '' : '/' + source;
+  } else if (target.startsWith('./') && target.split('/').length >= 3) {
+    const folderName = getFolderName(target);
+
+    if (!exists(folderName)) {
+      return;
+    }
+  }
+
+  rename(source, target);
 }
 
-module.exports = sum;
+mv();
