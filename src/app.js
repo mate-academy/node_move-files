@@ -5,16 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 function moveFile() {
-  const [enteredSourcePath, enteredDestinationPath] = process.argv.slice(2);
-  const fileName = path.basename(enteredSourcePath);
-  const basePath = path.resolve(__dirname, `../`);
-  const sourcePath = path.resolve(basePath, enteredSourcePath);
-  const destinationPath = path
-    .resolve(basePath, enteredDestinationPath);
-  const destinationStats = fs.statSync(
-    destinationPath,
-    { throwIfNoEntry: false }
-  );
+  const [sourcePath, destinationPath] = process.argv.slice(2);
+  const fileName = path.basename(sourcePath);
 
   if (!fs.existsSync(sourcePath)) {
     console.info('The file does not exist!!!');
@@ -22,7 +14,7 @@ function moveFile() {
     return;
   }
 
-  if (!fs.existsSync(destinationPath) && enteredDestinationPath.endsWith('/')) {
+  if (!fs.existsSync(destinationPath) && destinationPath.endsWith('/')) {
     console.info('Invalid destination path!!!');
 
     return;
@@ -30,7 +22,7 @@ function moveFile() {
     console.info('Invalid destination directory. Trying to rename file...');
   }
 
-  if (destinationStats && destinationStats.isDirectory()) {
+  if (destinationPath.endsWith('/')) {
     try {
       fs.copyFileSync(sourcePath, `${destinationPath}/${fileName}`);
     } catch (error) {
