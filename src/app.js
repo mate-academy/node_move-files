@@ -1,21 +1,42 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+
+const [currentFile, dest] = process.argv.slice(2);
+
+const renameFile = (oldName, newName) => {
+  fs.rename(oldName, newName, () => {});
+};
+
+const moveFile = (fileName, path) => {
+  const data = fs.readFileSync(fileName, 'utf8');
+
+  fs.rm(fileName, () => {});
+  fs.writeFileSync(path + fileName, data);
+};
+
+if (!dest.endsWith('/')) {
+  try {
+    const stats = fs.statSync(dest);
+
+    if (stats.isDirectory()) {
+      moveFile(currentFile, dest + '/');
+    } else {
+      renameFile(currentFile, dest);
+    }
+  } catch (e) {
+    renameFile(currentFile, dest);
+  }
 }
 
-module.exports = sum;
+if (dest.endsWith('/')) {
+  try {
+    const stats = fs.statSync(dest);
+
+    if (stats.isDirectory()) {
+      moveFile(currentFile, dest);
+    }
+  } catch (e) {
+    throw e;
+  }
+}
