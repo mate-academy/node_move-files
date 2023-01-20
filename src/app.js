@@ -24,13 +24,9 @@ if (!dest.endsWith('/')) {
 }
 
 if (dest.endsWith('/')) {
-  try {
-    const stats = fs.statSync(dest);
-
-    if (stats.isDirectory()) {
-      renameFile(currentFile, dest + currentFile);
-    }
-  } catch (e) {
-    throw e;
+  if (fs.existsSync(dest)) {
+    renameFile(currentFile, dest + currentFile);
+  } else {
+    throw new Error('Folder does not exist');
   }
 }
