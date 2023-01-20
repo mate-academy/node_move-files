@@ -8,24 +8,18 @@ const renameFile = (oldName, newName) => {
   fs.rename(oldName, newName, () => {});
 };
 
-const moveFile = (fileName, path) => {
-  const data = fs.readFileSync(fileName, 'utf8');
-
-  fs.rm(fileName, () => {});
-  fs.writeFileSync(path + fileName, data);
-};
-
 if (!dest.endsWith('/')) {
-  try {
-    const stats = fs.statSync(dest);
+  if (fs.existsSync(dest + '/')) {
+    renameFile(currentFile, dest + '/' + currentFile);
+  } else {
+    const lastUrlInx = dest.lastIndexOf('/') + 1;
+    const folderPath = dest.slice(0, lastUrlInx);
 
-    if (stats.isDirectory()) {
-      moveFile(currentFile, dest + '/');
-    } else {
+    if (fs.existsSync(folderPath)) {
       renameFile(currentFile, dest);
+    } else {
+      throw new Error('Folder does not exist');
     }
-  } catch (e) {
-    renameFile(currentFile, dest);
   }
 }
 
@@ -34,7 +28,7 @@ if (dest.endsWith('/')) {
     const stats = fs.statSync(dest);
 
     if (stats.isDirectory()) {
-      moveFile(currentFile, dest);
+      renameFile(currentFile, dest + currentFile);
     }
   } catch (e) {
     throw e;
