@@ -1,21 +1,32 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+
+const [currentFile, dest] = process.argv.slice(2);
+
+const renameFile = (oldName, newName) => {
+  fs.rename(oldName, newName, () => {});
+};
+
+if (!dest.endsWith('/')) {
+  if (fs.existsSync(dest + '/')) {
+    renameFile(currentFile, dest + '/' + currentFile);
+  } else {
+    const lastUrlInx = dest.lastIndexOf('/') + 1;
+    const folderPath = dest.slice(0, lastUrlInx);
+
+    if (fs.existsSync(folderPath)) {
+      renameFile(currentFile, dest);
+    } else {
+      throw new Error('Folder does not exist');
+    }
+  }
 }
 
-module.exports = sum;
+if (dest.endsWith('/')) {
+  if (fs.existsSync(dest)) {
+    renameFile(currentFile, dest + currentFile);
+  } else {
+    throw new Error('Folder does not exist');
+  }
+}
