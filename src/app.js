@@ -1,21 +1,19 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+
+const args = process.argv.slice(2);
+const fileName = args[0];
+let movePath = args[1];
+
+if (movePath[movePath.length - 1] === '/') {
+  movePath += fileName.slice(fileName.lastIndexOf('/') + 1);
 }
 
-module.exports = sum;
+fs.rename(fileName, movePath, (error) => {
+  if (error) {
+    console.log(error);
+  }
+
+  console.log(`File sucssesfuly move to ${movePath}`);
+});
