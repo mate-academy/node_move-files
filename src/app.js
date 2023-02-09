@@ -1,21 +1,28 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+
+const pathFrom = process.argv[2];
+let pathTo = process.argv[3];
+
+const arrFrom = pathFrom.split('/');
+const fileNameTo = arrFrom[arrFrom.length - 1];
+
+if (fs.existsSync(pathTo)) {
+  pathTo += `/${fileNameTo}`;
 }
 
-module.exports = sum;
+if (pathTo[pathTo.length - 1] === '/') {
+  pathTo += fileNameTo;
+}
+
+try {
+  const fileContent = fs.readFileSync(pathFrom, 'utf-8');
+
+  fs.writeFileSync(pathTo, fileContent);
+
+  fs.renameSync(pathFrom, pathTo);
+} catch (err) {
+  // eslint-disable-next-line no-console
+  console.log(err);
+}
