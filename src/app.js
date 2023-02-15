@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
+const { formatingPath } = require('./formattingPath');
 
 const terminal = readline.createInterface({
   input: process.stdin,
@@ -10,8 +11,8 @@ const terminal = readline.createInterface({
 });
 
 const moveFile = (message) => {
-  terminal.question(message, (recivedComand) => {
-    const [command, fileToMove, destination] = recivedComand.split(' ');
+  terminal.question(message, (receivedComand) => {
+    const [command, fileToMove, destination] = receivedComand.split(' ');
 
     if (command !== 'mv') {
       throw new Error('You wrote a wrong command, please try again');
@@ -22,7 +23,7 @@ const moveFile = (message) => {
     }
 
     const fileToMovePath = path.join(__dirname, '\\', fileToMove);
-    let destinationPath = path.join(__dirname, '\\', destination);
+    const destinationPath = path.join(__dirname, '\\', destination);
 
     const isFileExists = fs.existsSync(fileToMovePath);
     const isDestinantionExists = fs.existsSync(destinationPath);
@@ -38,17 +39,12 @@ const moveFile = (message) => {
       throw new Error('There is no such file to remove, please try again');
     }
 
-    if (
-      destinationPath[destinationPath.length - 1] === '\\'
-      || destinationPath[destinationPath.length - 1] === '/'
-    ) {
-      let divider = '/';
+    const isEndWithDivSymbol
+      = destinationPath[destinationPath.length - 1] === '\\'
+      || destinationPath[destinationPath.length - 1] === '/';
 
-      if (!fileToMove.includes(divider)) {
-        divider = '\\';
-      }
-
-      destinationPath += fileToMove.split(divider).slice(-1);
+    if (isEndWithDivSymbol) {
+      formatingPath(destinationPath, fileToMove);
     }
 
     fs.copyFile(fileToMovePath, destinationPath, (error) => {
