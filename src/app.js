@@ -23,7 +23,7 @@ const moveFile = (message) => {
     }
 
     const fileToMovePath = path.join(__dirname, '\\', fileToMove);
-    const destinationPath = path.join(__dirname, '\\', destination);
+    let destinationPath = path.join(__dirname, '\\', destination);
 
     const isFileExists = fs.existsSync(fileToMovePath);
     const isDestinantionExists = fs.existsSync(destinationPath);
@@ -44,7 +44,7 @@ const moveFile = (message) => {
       || destinationPath[destinationPath.length - 1] === '/';
 
     if (isEndWithDivSymbol) {
-      formatingPath(destinationPath, fileToMove);
+      destinationPath = formatingPath(destinationPath, fileToMove);
     }
 
     fs.copyFile(fileToMovePath, destinationPath, (error) => {
