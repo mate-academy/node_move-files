@@ -1,21 +1,29 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+
+const logError = (err) => {
+  if (err) {
+    // eslint-disable-next-line no-console
+    console.log(err);
+  }
+};
+
+function app() {
+  if (process.argv[2] !== 'mv') {
+    throw Error('Instructions unclear, tamed a dragon');
+  }
+
+  const from = process.argv[3];
+  const to = process.argv[4];
+
+  if (fs.existsSync(to, logError)) {
+    fs.cp(from, to, logError);
+  } else if (to.at(-1) === '/') {
+    throw Error('Destination directory does not exist.');
+  } else {
+    fs.rename(from, `./${to}`, logError);
+  }
 }
 
-module.exports = sum;
+app();
