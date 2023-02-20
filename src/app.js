@@ -10,12 +10,8 @@ const logError = (err) => {
 };
 
 function app() {
-  if (process.argv[2] !== 'mv') {
-    throw Error('Instructions unclear, tamed a dragon');
-  }
-
-  const from = process.argv[3];
-  const to = process.argv[4];
+  const from = process.argv[2];
+  const to = process.argv[3];
 
   if (fs.existsSync(to, logError)) {
     fs.cp(from, to, logError);
