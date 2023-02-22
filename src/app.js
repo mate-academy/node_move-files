@@ -17,8 +17,6 @@ if (isDirectory) {
   newTarget = newTarget + basename(source);
 }
 
-console.log(newTarget);
-
 fs.rename(source, newTarget, err => {
   if (err) {
     console.log(err);
