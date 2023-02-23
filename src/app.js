@@ -13,7 +13,6 @@ if (!source || !destination) {
 const isDirectory = destination.endsWith('/');
 const destinationPath = isDirectory ? path.join(destination, path.basename(source)) :  destination;
 
-console.log(path.join(destination, path.basename(source)));
 
 if (isDirectory && !fs.existsSync(destination)) {
   console.error(`Error: ${destination} does not exist`);
