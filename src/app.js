@@ -1,21 +1,30 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+const path = require('path');
+
+const [source, destination] = process.argv.slice(2);
+
+if (!source || !destination) {
+  console.error('Usage: node index source destination');
+  process.exit(1);
 }
 
-module.exports = sum;
+const isDirectory = destination.endsWith('/');
+const destinationPath = isDirectory ? path.join(destination, path.basename(source)) :  destination;
+
+console.log(path.join(destination, path.basename(source)));
+
+if (isDirectory && !fs.existsSync(destination)) {
+  console.error(`Error: ${destination} does not exist`);
+  process.exit(1);
+}
+
+fs.rename(source, destinationPath, (err) => {
+  if (err) {
+    console.error(`Error: ${err.message}`);
+    process.exit(1);
+  }
+
+  console.log(`File moved from ${source} to ${destinationPath}`);
+});
