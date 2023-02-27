@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use strict';
 
 const fs = require('fs');
@@ -11,8 +12,9 @@ if (!source || !destination) {
 }
 
 const isDirectory = destination.endsWith('/');
-const destinationPath = isDirectory ? path.join(destination, path.basename(source)) :  destination;
-
+const destinationPath = isDirectory
+  ? path.join(destination, path.basename(source))
+  : destination;
 
 if (isDirectory && !fs.existsSync(destination)) {
   console.error(`Error: ${destination} does not exist`);
