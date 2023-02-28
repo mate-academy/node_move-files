@@ -15,12 +15,14 @@ const moveFile = async(file, destination) => {
     await fs.writeFile(destinationPath, content);
   } catch (err) {
     if (err.code === 'EISDIR') {
-      const newDestination = path.join(destination, fileName);
+      const newDestination = path.join(destinationPath, fileName);
 
-      moveFile(file, newDestination);
+      await fs.writeFile(newDestination, content);
     } else {
       throw Error(err);
     }
+  } finally {
+    await fs.rm(filePath);
   }
 };
 
