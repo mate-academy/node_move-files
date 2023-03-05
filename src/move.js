@@ -9,20 +9,13 @@ const moveFile = async(file, destination) => {
   const destinationPath = destination.endsWith('/')
     ? path.join(__dirname, destination, fileName)
     : path.join(__dirname, destination);
-  const content = await fs.readFile(filePath);
 
   try {
-    await fs.writeFile(destinationPath, content);
+    await fs.rename(filePath, destinationPath);
   } catch (err) {
-    if (err.code === 'EISDIR') {
-      const newDestination = path.join(destinationPath, fileName);
+    const newDestination = path.join(destinationPath, fileName);
 
-      await fs.writeFile(newDestination, content);
-    } else {
-      throw Error(err);
-    }
-  } finally {
-    await fs.rm(filePath);
+    await fs.rename(filePath, newDestination);
   }
 };
 
