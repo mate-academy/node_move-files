@@ -1,8 +1,5 @@
 'use strict';
 
-const { readFile } = require('./readFile');
-const { writeFile } = require('./writeFile');
-const { deleteFile } = require('./deleteFile');
 const { renameFile } = require('./renameFile');
 
 const moveFiles = (
@@ -12,22 +9,16 @@ const moveFiles = (
   destinationToMove
 ) => {
   if (command === 'mv') {
-    const data = readFile(fileToMovePath);
-
     if (destinationToMove.endsWith('.txt')) {
       renameFile(fileToMovePath, destinationToMove);
     } else if (destinationToMove.endsWith('/')) {
-      writeFile(destinationToMove + fileToMove, data);
-
-      deleteFile(fileToMovePath);
+      renameFile(fileToMovePath, destinationToMove + fileToMove);
     } else {
-      const status = writeFile(destinationToMove + '/' + fileToMove, data);
-
-      if (status === -1) {
-        writeFile(destinationToMove + '.txt', data);
+      try {
+        renameFile(fileToMovePath, destinationToMove + '/' + fileToMove);
+      } catch (error) {
+        renameFile(fileToMovePath, destinationToMove + '.txt');
       }
-
-      deleteFile(fileToMovePath);
     }
   } else {
     global.console.log('Wrong command - for moving use "mv"');

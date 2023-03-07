@@ -6,7 +6,7 @@ const renameFile = (fileToMovePath, destinationFileDirectory) => {
   try {
     fs.renameSync(fileToMovePath, destinationFileDirectory);
   } catch (error) {
-    global.console.log('Unable to rename file, no such file or directory');
+    throw new Error('Something went wrong' + error.message);
   }
 };
 
