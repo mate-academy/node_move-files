@@ -10,11 +10,9 @@ const { moveFiles } = require('./modules/moveFiles');
 // node src/app.js  mv file.txt a
 // node src/app.js  mv file.txt b
 
-const args = process.argv.slice(2);
+const [command, fileToMove, destination] = process.argv.slice(2);
 
-const command = args[0];
-const fileToMove = args[1];
 const fileToMovePath = path.join(__dirname, fileToMove);
-const destinationToMove = path.join(__dirname, args[2]);
+const destinationToMove = path.join(__dirname, destination);
 
 moveFiles(command, fileToMove, fileToMovePath, destinationToMove);
