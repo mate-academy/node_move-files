@@ -11,22 +11,21 @@ const moveFile = (fileToMove, destination) => {
   const oldPath = path.join(__dirname, fileToMove);
   const newPath = path.join(__dirname, destination);
   const fileName = path.basename(oldPath);
-  let isFolder;
 
-  try {
-    isFolder = fs.lstatSync(newPath).isDirectory();
-  } catch (error) {
-    isFolder = false;
+  if (destination.endsWith('/') && !fs.existsSync(newPath)) {
+    throw new Error('no such directory');
   }
 
-  const newDestination = isFolder
-    ? path.join(newPath, fileName)
-    : newPath;
+  let newDestination = destination.endsWith('/')
+    ? path.join(__dirname, destination, fileName)
+    : path.join(__dirname, destination);
 
   try {
     fs.renameSync(oldPath, newDestination);
   } catch (error) {
-    global.console.log(`Error code - ${error.message}`);
+    newDestination = path.join(newDestination, fileName);
+
+    fs.renameSync(oldPath, newDestination);
   }
 };
 
