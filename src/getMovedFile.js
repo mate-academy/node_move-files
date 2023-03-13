@@ -5,12 +5,15 @@ const fs = require('fs');
 const path = require('path');
 
 function getMovedFile(source, destination) {
-  if (!fs.existsSync(destination)) {
+  const sourcePath = path.join(__dirname, source);
+  const destinationPath = path.join(__dirname, destination);
+
+  if (!fs.existsSync(destinationPath)) {
     console.error(`Destination directory ${destination} does not exist.`);
     process.exit(1);
   }
 
-  const sourceStats = fs.statSync(source);
+  const sourceStats = fs.statSync(sourcePath);
 
   if (!sourceStats.isFile()) {
     console.error(`${source} is not a file.`);
@@ -19,13 +22,13 @@ function getMovedFile(source, destination) {
 
   const isDestinationDir = destination.endsWith('/');
 
-  const destinationPath = isDestinationDir
-    ? path.join(destination, path.basename(source))
-    : destination;
+  const finalDestinationPath = isDestinationDir
+    ? path.join(destinationPath, path.basename(sourcePath))
+    : destinationPath;
 
-  fs.renameSync(source, destinationPath);
+  fs.renameSync(sourcePath, finalDestinationPath);
 
-  console.log(`Moved ${source} to ${destinationPath}`);
+  console.log(`Moved ${sourcePath} to ${finalDestinationPath}`);
 }
 
 module.exports = { getMovedFile };
