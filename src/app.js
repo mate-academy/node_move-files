@@ -9,7 +9,7 @@ const newFile = process.argv[3];
 
 let newFilePath = newFile;
 
-if (newFile[newFile.length - 1] === '/') {
+if (newFile.at(-1) === '/') {
   if (!fs.existsSync(newFile)) {
     console.log('This folder does not exist.');
 
