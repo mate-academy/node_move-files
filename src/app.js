@@ -13,6 +13,13 @@ if (!fs.existsSync(source)) {
   return;
 }
 
+if (!fs.existsSync(destination)) {
+  // eslint-disable-next-line no-console
+  console.log('need write destination');
+
+  return;
+}
+
 const isDir = destination.endsWith('/');
 const destPath = isDir ? destination.slice(0, -1) : destination;
 const dirPath = path.dirname(destPath);
