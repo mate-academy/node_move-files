@@ -6,7 +6,6 @@ const path = require('path');
 module.exports = function move(dir, file, data, deleteFile) {
   fs.writeFile(path.join(dir, path.basename(file)), data, (err) => {
     if (err) {
-      // eslint-disable-next-line no-console
       throw Error(err);
     } else {
       fs.unlink(deleteFile, (error) => {
