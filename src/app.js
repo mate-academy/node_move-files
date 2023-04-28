@@ -7,17 +7,11 @@ const moveFile = require('./moveFile');
 const [source, destination] = process.argv.slice(2);
 
 if (!fs.existsSync(source)) {
-  // eslint-disable-next-line no-console
-  console.log('file not found');
-
-  return;
+  throw Error('file not found');
 }
 
-if (!fs.existsSync(destination)) {
-  // eslint-disable-next-line no-console
-  console.log('need write destination');
-
-  return;
+if (!fs.existsSync(path.dirname(destination))) {
+  throw Error('this catalog not found');
 }
 
 const isDir = destination.endsWith('/');
@@ -25,15 +19,10 @@ const destPath = isDir ? destination.slice(0, -1) : destination;
 const dirPath = path.dirname(destPath);
 const fileName = path.basename(destPath);
 
-fs.readFile(path.basename(source), (error, data) => {
-  if (error) {
-    // eslint-disable-next-line no-console
-    console.log(error);
-  } else {
-    if (path.extname(fileName)) {
-      moveFile(dirPath, fileName, data);
-    } else {
-      moveFile(destPath, path.basename(source), data);
-    }
-  }
-});
+const fileContent = fs.readFileSync(path.basename(source));
+
+if (path.extname(fileName)) {
+  moveFile(dirPath, fileName, fileContent, source);
+} else {
+  moveFile(destPath, path.basename(source), fileContent, source);
+}
