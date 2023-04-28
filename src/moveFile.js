@@ -41,7 +41,6 @@ const moveFile = async(input) => {
   } catch (error) {
     if (error) {
       console.error(`Error occured when moving from ${fromPath} to ${dirName}`);
-      console.log(error);
     }
   }
 };
