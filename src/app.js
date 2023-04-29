@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 function moveFileToDirectory() {
-  const [src, dest] = process.argv.slice(2);
+  const [sourcePath, destinationPath] = process.argv.slice(2);
 
   if (process.argv.length < 4) {
     console.log('Please, enter correct file name and destination to move');
@@ -13,34 +13,32 @@ function moveFileToDirectory() {
     return;
   }
 
-  const oldPath = path.join(__dirname, src);
-  const newPath = path.join(__dirname, dest);
-  const isDirectory = dest.endsWith('/');
-  const newDestination = isDirectory
-    ? path.join(newPath, path.basename(oldPath))
-    : newPath;
+  const isDirectory = destinationPath.endsWith('/');
+  const newDestinationPath = isDirectory
+    ? path.join(destinationPath, path.basename(sourcePath))
+    : destinationPath;
 
-  if (!fs.existsSync(oldPath)) {
+  if (!fs.existsSync(sourcePath)) {
     console.error('Source file doesnt exist');
 
     return;
   }
 
-  if (oldPath === newPath) {
-    console.log('You cant move file to the same folder');
+  if (sourcePath === newDestinationPath) {
+    console.error('You cant move file to the same folder');
 
     return;
   }
 
-  if (!fs.existsSync(newPath) && isDirectory) {
-    console.log('This directory doesnt exist');
+  if (!fs.existsSync(newDestinationPath) && isDirectory) {
+    console.error('This directory doesnt exist');
 
     return;
   }
 
-  fs.rename(oldPath, newDestination, (error) => {
+  fs.rename(sourcePath, newDestinationPath, (error) => {
     if (error) {
-      console.log(error);
+      console.error(error);
     }
 
     console.log('Operation was done');
