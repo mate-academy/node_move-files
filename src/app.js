@@ -4,4 +4,4 @@ const { moveFile } = require('./moveFile');
 
 const args = process.argv;
 
-moveFile(args);
+moveFile(args.length, args[2], args[3]);

@@ -1,22 +1,21 @@
-/* eslint-disable no-console */
 'use strict';
 
 const { existsSync } = require('fs');
 const fs = require('fs/promises');
 const path = require('node:path');
+const myConsole = require('console');
 
 const doesNotExistError = (pathName) => {
-  console.error(`Error. Path ${pathName} does not exist.`);
+  myConsole.error(`Error. Path ${pathName} does not exist.`);
 };
 
-const moveFile = async(input) => {
-  if (input.length !== 4) {
-    console.error('Please, enter exact two paths.');
+const moveFile = async(terminalCommandsCount, fromPath, toPath) => {
+  if (terminalCommandsCount !== 4) {
+    myConsole.error('Please, enter exact two paths.');
 
     return;
   }
 
-  const [fromPath, toPath] = input.slice(2);
   const isDirectory = toPath.endsWith('/');
 
   if (!existsSync(fromPath)) {
@@ -37,11 +36,9 @@ const moveFile = async(input) => {
 
   try {
     await fs.rename(fromPath, dirName);
-    console.log(`Successfully moved from ${fromPath} to ${dirName}`);
+    myConsole.log(`Successfully moved from ${fromPath} to ${dirName}`);
   } catch (error) {
-    if (error) {
-      console.error(`Error occured when moving from ${fromPath} to ${dirName}`);
-    }
+    myConsole.error(`Error occured when moving from ${fromPath} to ${dirName}`);
   }
 };
 
