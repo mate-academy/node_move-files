@@ -1,21 +1,13 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const { moveOrRenameFile } = require('./helpers-move/moveOrRenameFile');
+
+const [ source, destination ] = process.argv.slice(2);
+
+if (!source || !destination) {
+  global.console.error('Usage: node app.js <source> <destination>');
+
+  process.exit();
 }
 
-module.exports = sum;
+moveOrRenameFile(source, destination);
