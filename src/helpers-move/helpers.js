@@ -1,6 +1,6 @@
 'use strict';
 
-const fs = require('fs');
+const fs = require('node:fs');
 
 const checkIsFile = (path) => {
   const isExist = fs.existsSync(path);
