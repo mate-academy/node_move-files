@@ -19,9 +19,21 @@ const moveFile = (src, dest) => {
     return;
   }
 
-  const isDirectory = dest.endsWith('/');
-  const filename = path.basename(src);
-  const destPath = isDirectory ? path.join(dest, filename) : dest;
+  let destPath = dest;
+
+  try {
+    const destStat = fs.fstatSync(fs.openSync(dest, 'r'));
+
+    if (destStat.isDirectory()) {
+      destPath = path.join(dest, path.basename(src));
+    }
+  } catch (err) {
+    if (err.code !== 'ENOENT') {
+      console.error(`Error checking destination file: ${err.message}`);
+
+      return;
+    }
+  }
 
   try {
     fs.renameSync(src, destPath);
