@@ -5,29 +5,21 @@ const path = require('path');
 
 function copyFileContentAndMove(source, destination) {
   try {
-    const fileContent = fs.readFileSync(source, (err) => {
-      if (err) {
-        return err;
-      }
-    });
+    const fileContent = fs.readFileSync(source);
 
-    fs.writeFileSync(destination, fileContent, (err) => {
-      if (err) {
-        return err;
-      }
-    });
+    fs.writeFileSync(destination, fileContent);
 
-    fs.unlink(source, (err) => {
-      if (err) {
-        return err;
-      }
-    });
+    fs.unlinkSync(source);
   } catch (error) {
     throw error;
   }
 }
 
 function moveFile(command, source, destination) {
+  if (!fs.existsSync(source)) {
+    return 'File doesn\'t exist';
+  }
+
   if (command === 'mv') {
     const sourcePath = path.dirname(source);
     const destinationPath = path.dirname(destination);
@@ -64,33 +56,31 @@ function moveFile(command, source, destination) {
       );
     }
 
-    switch (true) {
-      case sourcePath === destinationPath:
-        fs.rename(source, updatedDestinationPath, (error) => {
+    if (sourcePath === destinationPath) {
+      fs.rename(source, updatedDestinationPath, (error) => {
+        if (error) {
+          return error;
+        }
+      });
+
+      return;
+    }
+
+    if (destinationPath === '.' && !destinationCheckResult) {
+      fs.rename(
+        source,
+        path.join(sourcePath, updatedDestinationPath),
+        (error) => {
           if (error) {
             return error;
           }
-        });
-        break;
+        }
+      );
 
-      case destinationPath === '.' && !destinationCheckResult:
-        updatedDestinationPath = destinationExt ? destination
-          : destination + sourceExt;
-
-        fs.rename(
-          source,
-          path.join(sourcePath, updatedDestinationPath),
-          (error) => {
-            if (error) {
-              return error;
-            }
-          }
-        );
-        break;
-
-      default:
-        copyFileContentAndMove(source, updatedDestinationPath);
+      return;
     }
+
+    copyFileContentAndMove(source, updatedDestinationPath);
   } else {
     return 'wrong command';
   }
