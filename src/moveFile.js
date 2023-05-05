@@ -15,75 +15,71 @@ function copyFileContentAndMove(source, destination) {
   }
 }
 
-function moveFile(command, source, destination) {
-  if (!fs.existsSync(source)) {
-    return 'File doesn\'t exist';
+function moveFile(source, destination) {
+  const sourcePath = path.dirname(source);
+  const destinationPath = path.dirname(destination);
+  const sourceExt = path.extname(source);
+  const destinationExt = path.extname(destination);
+  const sourceFileName = path.basename(source, path.extname(source));
+  let destinationFileName = '';
+
+  if (destination[destination.length - 1] !== '/'
+      && destinationPath !== '.') {
+    destinationFileName = path.basename(
+      destination,
+      path.extname(destination)
+    );
   }
 
-  if (command === 'mv') {
-    const sourcePath = path.dirname(source);
-    const destinationPath = path.dirname(destination);
-    const sourceExt = path.extname(source);
-    const destinationExt = path.extname(destination);
-    const sourceFileName = path.basename(source, path.extname(source));
-    let destinationFileName = '';
+  let updatedDestinationPath = destination;
 
-    if (destination[destination.length - 1] !== '/'
-      && destinationPath !== '.') {
-      destinationFileName = path.basename(
-        destination,
-        path.extname(destination)
-      );
-    }
+  const destinationCheckResult = fs.existsSync(destination);
 
-    let updatedDestinationPath = destination;
+  if (destinationExt !== sourceExt && destinationPath !== '.') {
+    updatedDestinationPath = path.join(
+      destinationPath,
+      destinationFileName + sourceExt
+    );
+  }
 
-    let destinationCheckResult = false;
+  if (!destinationFileName && destinationCheckResult) {
+    updatedDestinationPath = path.join(
+      destination,
+      sourceFileName + sourceExt
+    );
+  }
 
-    destinationCheckResult = fs.existsSync(destination);
+  if (destinationPath === '.' && !destinationCheckResult) {
+    updatedDestinationPath += destinationExt || sourceExt;
 
-    if (destinationExt !== sourceExt && destinationPath !== '.') {
-      updatedDestinationPath = path.join(
-        destinationPath,
-        destinationFileName + sourceExt
-      );
-    }
-
-    if (!destinationFileName && destinationCheckResult) {
-      updatedDestinationPath = path.join(
-        destination,
-        sourceFileName + sourceExt
-      );
-    }
-
-    if (sourcePath === destinationPath) {
-      fs.rename(source, updatedDestinationPath, (error) => {
+    fs.rename(
+      source,
+      path.join(sourcePath, updatedDestinationPath),
+      (error) => {
         if (error) {
           return error;
         }
-      });
+      }
+    );
 
-      return;
-    }
-
-    if (destinationPath === '.' && !destinationCheckResult) {
-      fs.rename(
-        source,
-        path.join(sourcePath, updatedDestinationPath),
-        (error) => {
-          if (error) {
-            return error;
-          }
-        }
-      );
-
-      return;
-    }
-
-    copyFileContentAndMove(source, updatedDestinationPath);
-  } else {
-    return 'wrong command';
+    return;
   }
+
+  if (!destinationCheckResult) {
+    throw new Error('Destination doesn\'t exist');
+  };
+
+  if (sourcePath === destinationPath) {
+    fs.rename(source, updatedDestinationPath, (error) => {
+      if (error) {
+        return error;
+      }
+    });
+
+    return;
+  }
+
+  copyFileContentAndMove(source, updatedDestinationPath);
 }
 
 module.exports = moveFile;
