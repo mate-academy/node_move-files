@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use strict';
 
 const fs = require('fs');
@@ -15,12 +16,14 @@ const moveFile = (from, to) => {
 
   const isDir = fs.lstatSync(destinationDir).isDirectory();
 
-  const finalPath = isDir ? path.join(destinationDir, path.basename(sourceFile)) : destinationDir;
+  const finalPath = isDir
+    ? path.join(destinationDir, path.basename(sourceFile))
+    : destinationDir;
 
   console.log('Moving file from:', sourceFile);
   console.log('Moving file to:', finalPath);
 
   fs.renameSync(sourceFile, finalPath);
-}
+};
 
 moveFile(sourcePath, directPath);
