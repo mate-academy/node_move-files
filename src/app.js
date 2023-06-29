@@ -1,21 +1,28 @@
+/* eslint-disable no-console */
+// node ./src/app.js ./testMove/test.txt ./testMove/init/test.txt
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const fs = require('fs');
 
-module.exports = sum;
+const [currentPath, newPath] = process.argv.slice(2);
+
+const moveFile = () => {
+  const isDir = newPath[newPath.length - 1] === '/';
+  const newFilePath = newPath + '/' + currentPath.split('/').pop();
+
+  try {
+    if (isDir) {
+      fs.renameSync(currentPath, newFilePath);
+    }
+
+    if (!isDir) {
+      fs.renameSync(currentPath, newPath);
+    }
+  } catch (error) {
+    console.log('Error:', error);
+  }
+
+  console.log('File moved successfully!');
+};
+
+moveFile();
