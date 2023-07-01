@@ -2,11 +2,8 @@
 
 const fs = require('fs');
 
-const renameFile = (oldName, newName, isExist) => {
-  const oldPath = `src/${oldName}`;
-  const newPath = isExist ? `src/${newName}/${oldName}` : `src/${newName}`;
-
-  fs.rename(oldPath, newPath, (err) => {
+const renameFile = (oldName, newName) => {
+  fs.rename(oldName, newName, (err) => {
     if (err) {
       throw new Error('Rename error');
     }
@@ -17,17 +14,21 @@ const app = () => {
   const args = process.argv.slice(2);
   const firstPath = args[0];
   const secondPath = args[1];
+  const isExists = fs.existsSync(`src/${secondPath}`);
+
+  const firstPathFormatted = `src/${firstPath}`;
+  const secondPathFormatted = isExists
+    ? `src/${secondPath}/${firstPath}`
+    : `src/${secondPath}`;
 
   try {
-    const isExists = fs.existsSync(`src/${secondPath}`);
-
     if (secondPath[secondPath.length - 1] === '/' && !isExists) {
       throw new Error('No such directory');
     }
 
-    renameFile(firstPath, secondPath, isExists);
+    renameFile(firstPathFormatted, secondPathFormatted);
   } catch (error) {
-    // Some error handling
+    console.error(error);
   }
 };
 
