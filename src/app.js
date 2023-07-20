@@ -4,32 +4,33 @@
 const fs = require('fs');
 const path = require('path');
 
-function moveFile(from, to) {
-  const sourcePath = path.resolve(from);
-  const destinationPath = path.resolve(to);
+const [source, param] = process.argv.slice(2);
 
-  if (!fs.existsSync(sourcePath)) {
-    console.log('Source file does not exist.');
+function moveFile() {
+  const sourcePath = path.resolve(source);
+  const destinationPath = path.resolve(param);
+
+  const isRename = path.dirname(sourcePath) === path.dirname(destinationPath);
+
+  if (isRename) {
+    fs.renameSync(sourcePath, destinationPath);
+    console.log('File renamed successfully.');
 
     return;
+  }
+
+  if (!fs.existsSync(sourcePath)) {
+    throw new Error('Source file does not exist.');
   }
 
   const directory = path.dirname(destinationPath);
 
   if (!fs.existsSync(directory)) {
-    console.log('Destination directory does not exist.');
-
-    return;
+    fs.mkdirSync(directory, { recursive: true });
   }
 
-  const finalDestinationPath = destinationPath.endsWith('/')
-    ? path.join(destinationPath, path.basename(sourcePath))
-    : destinationPath;
-
-  fs.rename(sourcePath, finalDestinationPath);
+  fs.renameSync(sourcePath, destinationPath);
   console.log('File moved successfully.');
 }
 
-const [source, destination] = process.argv.slice(2);
-
-moveFile(source, destination);
+moveFile();
