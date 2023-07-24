@@ -1,21 +1,37 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const fs = require('fs/promises');
+const { sep, basename, dirname } = require('path');
 
-module.exports = sum;
+const fileParam = process.argv[2];
+const endpointParam = process.argv[3];
+
+moveFile(fileParam, endpointParam);
+
+async function moveFile(file, endpoint) {
+  try {
+    const isOnTheSameDir = dirname(fileParam) === dirname(endpointParam);
+
+    if (isOnTheSameDir) {
+      await fs.rename(fileParam, endpointParam);
+
+      return;
+    }
+
+    const dataOfFile = await fs.readFile(file);
+
+    await fs.writeFile(endpoint, dataOfFile);
+    await fs.rm(file);
+  } catch (err) {
+    if (err.code === 'EROFS') {
+      return moveFile(file, `.${endpoint + sep}`);
+    }
+
+    if (err.code === 'EISDIR') {
+      return moveFile(file, endpoint + sep + basename(file));
+    }
+
+    // eslint-disable-next-line no-console
+    console.log('ERROR: ', err.message);
+  }
+}
