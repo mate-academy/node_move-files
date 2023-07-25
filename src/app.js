@@ -1,21 +1,35 @@
+/* eslint-disable no-console */
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const fs = require('fs');
 
-module.exports = sum;
+const changeFile = (moveFrom, moveTo) => {
+  const isDirectory = moveTo[moveTo.length - 1] === '/';
+  const fileName = moveFrom.split('/')[moveFrom.split('/').length - 1];
+
+  if (!fs.existsSync(moveTo) && isDirectory) {
+    throw new Error('Directory does not exist');
+  }
+
+  try {
+    if (fs.existsSync(moveTo) && !isDirectory) {
+      fs.renameSync(moveFrom, moveTo + '/' + fileName);
+
+      return console.log('Successfully');
+    }
+
+    if (isDirectory) {
+      fs.renameSync(moveFrom, moveTo + fileName);
+
+      return console.log('Successfully');
+    }
+
+    fs.renameSync(moveFrom, moveTo);
+  } catch (error) {
+    throw new Error('Failed to move or rename file');
+  }
+};
+
+const [origin, destination] = process.argv.slice(2);
+
+changeFile(origin, destination);
