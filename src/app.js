@@ -1,21 +1,22 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const path = require('path');
 
-module.exports = sum;
+const { moveFiles } = require('./modules/moveFiles.js');
+
+const startMoving = () => {
+  const [oldPath, newPath] = process.argv.slice(2);
+
+  if (!oldPath || !newPath) {
+    throw new Error(
+      'You should pass the way to the old path and the new path.'
+    );
+  }
+
+  const oldFullPath = path.join(__dirname, oldPath);
+  const newFullPath = path.join(__dirname, newPath);
+
+  moveFiles(oldFullPath, newFullPath);
+};
+
+startMoving();
