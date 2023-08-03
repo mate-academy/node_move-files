@@ -1,33 +1,35 @@
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
-function moveFile(fileName, moveTo) {
+async function moveFile(fileName, moveTo) {
+  const filePath = path.join(__dirname, fileName);
   let movePath = path.join(__dirname, '..', moveTo);
+  let data;
 
   movePath = movePath.endsWith('/') ? movePath.slice(0, -1) : movePath;
 
-  const isDir = fs.existsSync(movePath);
-  const filePath = path.join(__dirname, fileName);
-  const data = fs.readFileSync(filePath, 'utf-8', (err, result) => {
+  fs.readFile(movePath, 'utf-8', (err) => {
     if (err) {
-      throw new Error(err);
+      throw new Error(`Directory ${movePath} does not exist`);
     }
   });
-
-  if (!isDir) {
-    throw new Error(`Directory ${movePath} does not exist`);
-  }
 
   movePath = path.join(movePath, fileName);
 
-  fs.writeFile(movePath, data, (err, result) => {
-    if (err) {
-      throw new Error(err);
-    }
-  });
-  fs.rmSync(filePath);
+  try {
+    data = await fs.readFile(filePath, 'utf-8');
+  } catch (err) {
+    throw new Error(err);
+  }
+
+  try {
+    await fs.writeFile(movePath, data);
+    await fs.rm(filePath);
+  } catch (err) {
+    throw new Error(err);
+  }
 };
 
 module.exports = moveFile;
