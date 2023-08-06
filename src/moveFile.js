@@ -10,11 +10,11 @@ async function moveFile(fileName, moveTo) {
 
   movePath = movePath.endsWith('/') ? movePath.slice(0, -1) : movePath;
 
-  fs.readFile(movePath, 'utf-8', (err) => {
-    if (err) {
-      throw new Error(`Directory ${movePath} does not exist`);
-    }
-  });
+  try {
+    fs.readFile(movePath, 'utf-8');
+  } catch (err) {
+    throw err;
+  }
 
   movePath = path.join(movePath, fileName);
 
@@ -28,7 +28,7 @@ async function moveFile(fileName, moveTo) {
     await fs.writeFile(movePath, data);
     await fs.rm(filePath);
   } catch (err) {
-    throw new Error(err);
+    throw err;
   }
 };
 
