@@ -1,22 +1,41 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 
-const { moveFiles } = require('./modules/moveFiles.js');
+const normalizePath = (filePath, newPath) => {
+  switch (true) {
+    case newPath.endsWith(path.sep):
+      return path.join(newPath, filePath);
 
-const startMoving = () => {
-  const [oldPath, newPath] = process.argv.slice(2);
+    case fs.existsSync(newPath):
+      return path.join(newPath, path.sep, filePath);
 
-  if (!oldPath || !newPath) {
+    default:
+      return newPath;
+  }
+};
+
+const moveFiles = () => {
+  const [source, dest] = process.argv.slice(2);
+
+  if (!source || !dest) {
     throw new Error(
       'You should pass the way to the old path and the new path.'
     );
   }
 
-  const oldFullPath = path.join(__dirname, oldPath);
-  const newFullPath = path.join(__dirname, newPath);
+  const oldPath = path.resolve(source);
+  const newPath = path.resolve(dest);
 
-  moveFiles(oldFullPath, newFullPath);
+  const filePath = oldPath.split(path.sep).pop();
+  const normalizedPath = normalizePath(filePath, newPath);
+
+  try {
+    fs.renameSync(oldPath, normalizedPath);
+  } catch (error) {
+    throw new Error('Something went wrong\n: ', error);
+  }
 };
 
-startMoving();
+moveFiles();
