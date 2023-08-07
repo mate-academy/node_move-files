@@ -1,21 +1,25 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const fs = require('fs').promises;
+const path = require('path');
 
-module.exports = sum;
+const moveFile = async(srcFile, destFile) => {
+  const srcPath = path.resolve(srcFile);
+  const destPath = path.resolve(destFile);
+
+  const fileName = path.basename(srcPath);
+  const isExist = await fs.access(srcPath)
+    .then(() => true)
+    .catch(() => false);
+
+  if (!isExist) {
+    throw new Error(
+      `The file ${fileName} does not exist at the source location.`
+    );
+  }
+
+  await fs.copyFile(srcPath, destPath);
+  await fs.unlink(srcPath);
+};
+
+moveFile('file.txt', './src/file.txt');
