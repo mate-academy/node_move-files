@@ -12,31 +12,27 @@ function moveFile() {
     throw new Error('File name and destination are required!');
   }
 
-  const normalizeSource = path.join(__dirname, source);
-  const normalizeDestination = path.join(__dirname, dest);
-
   try {
-    const data = fs.readFileSync(normalizeSource, 'utf8');
+    const data = fs.readFileSync(source);
 
     if (dest.endsWith(source.split('.')[1])) {
-      fs.renameSync(normalizeSource, normalizeDestination);
+      fs.renameSync(source, dest);
 
       return;
     }
 
-    if (!fs.existsSync(normalizeDestination)) {
+    if (!fs.existsSync(dest)) {
       throw new Error('No such directory');
     }
 
     const sourceArr = source.split('/');
     const filename = sourceArr[sourceArr.length - 1];
 
-    fs.rmSync(normalizeSource);
+    fs.rmSync(source);
 
     fs.writeFileSync(
-      path.join(normalizeDestination, filename),
+      path.join(dest, filename),
       data,
-      'utf8',
     );
   } catch (e) {
     console.error(e);
