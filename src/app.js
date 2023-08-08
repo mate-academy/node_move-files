@@ -12,28 +12,23 @@ function moveFile() {
     throw new Error('File name and destination are required!');
   }
 
+  const sourcePath = path.resolve(source);
+  const destPath = path.resolve(dest);
+
+  const fileName = source.split(path.sep).pop();
+
+  console.log(sourcePath, destPath);
+
   try {
-    const data = fs.readFileSync(source);
+    let finalDest = destPath;
 
-    if (dest.endsWith(source.split('.')[1])) {
-      fs.renameSync(source, dest);
-
-      return;
+    if (destPath.endsWith(path.sep)) {
+      finalDest = path.join(destPath, fileName);
+    } else if (fs.existsSync(destPath)) {
+      finalDest = path.join(destPath, path.sep, fileName);
     }
 
-    if (!fs.existsSync(dest)) {
-      throw new Error('No such directory');
-    }
-
-    const sourceArr = source.split('/');
-    const filename = sourceArr[sourceArr.length - 1];
-
-    fs.rmSync(source);
-
-    fs.writeFileSync(
-      path.join(dest, filename),
-      data,
-    );
+    fs.renameSync(sourcePath, finalDest);
   } catch (e) {
     console.error(e);
   }
