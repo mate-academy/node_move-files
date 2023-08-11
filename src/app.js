@@ -1,5 +1,7 @@
 'use strict';
 
+const { moveFiles } = require('./moveFiles');
+
 /**
  * Implement sum function:
  *
@@ -13,9 +15,4 @@
  *
  * @return {number}
  */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
-
-module.exports = sum;
+moveFiles(process.argv[2], process.argv[3]);
