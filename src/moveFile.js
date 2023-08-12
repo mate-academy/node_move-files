@@ -11,7 +11,7 @@ async function moveFile(fileName, moveTo) {
   movePath = movePath.endsWith('/') ? movePath.slice(0, -1) : movePath;
 
   try {
-    fs.readFile(movePath, 'utf-8');
+    await fs.readFile(movePath, 'utf-8');
   } catch (err) {
     throw err;
   }
