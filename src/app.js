@@ -1,21 +1,19 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const moveFile = require('./moveFile');
+const terminal = require('./modules/terminal');
 
-module.exports = sum;
+terminal.question('Enter your command: ', (key) => {
+  const [command, fileName, moveTo] = key.trim().split(' ');
+
+  if (command !== 'mv') {
+    throw new Error('Unknown command!');
+  }
+
+  try {
+    moveFile(fileName, moveTo);
+    terminal.close();
+  } catch (error) {
+    throw new Error(error);
+  }
+});
