@@ -23,6 +23,8 @@ function moveFiles(source, destination) {
 
     if (!fs.existsSync(destinationDir)) {
       console.log('The directory does not exist');
+
+      return;
     }
 
     try {
