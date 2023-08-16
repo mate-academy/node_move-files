@@ -2,41 +2,28 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
 
 function moveFile() {
   const fileToMove = process.argv[2];
   const selectedPath = process.argv[3];
-  const isExistFileToMove = fs.existsSync(path.join(__dirname, fileToMove));
-  const isExistSelectedPath = fs.existsSync(path.join(__dirname, selectedPath));
 
-  if (!isExistFileToMove) {
+  if (!fs.existsSync(fileToMove)) {
     console.error(`${fileToMove} does not exist`);
 
     return;
   }
 
-  const content = fs.readFileSync(
-    path.join(__dirname, fileToMove),
-    'utf8',
-    (err, data) => {
-      if (err) {
-        throw new Error(err);
-      }
+  const content = fs.readFileSync(fileToMove);
 
-      return data;
-    },
-  );
-
-  if (isExistSelectedPath) {
-    fs.stat(path.join(__dirname, selectedPath), (error, stats) => {
+  if (fs.existsSync(selectedPath)) {
+    fs.stat(selectedPath, (error, stats) => {
       if (error) {
         throw new Error(error);
       }
 
       if (stats.isDirectory()) {
         fs.writeFileSync(
-          path.join(__dirname, `/${selectedPath}/${fileToMove}`),
+          `${selectedPath}/${fileToMove}`,
           content,
           (err) => {
             if (err) {
@@ -48,7 +35,7 @@ function moveFile() {
 
       if (stats.isFile()) {
         fs.writeFileSync(
-          path.join(__dirname, selectedPath),
+          selectedPath,
           content,
           (err) => {
             if (err) {
@@ -58,7 +45,7 @@ function moveFile() {
         );
       }
 
-      fs.rm(path.join(__dirname, fileToMove), (err) => {
+      fs.rm(fileToMove, (err) => {
         if (err) {
           throw new Error(err);
         }
@@ -72,10 +59,12 @@ function moveFile() {
 
   if (!isFolder) {
     const parts = fileToMove.split('.');
-    const extension = parts[parts.length - 1];
+    const extension = selectedPath.split('.').length > 1
+      ? ''
+      : `.${parts[parts.length - 1]}`;
 
     fs.writeFileSync(
-      path.join(__dirname, `${selectedPath}.${extension}`),
+      (selectedPath + extension),
       content,
       (err) => {
         if (err) {
@@ -84,7 +73,7 @@ function moveFile() {
       },
     );
 
-    fs.rm(path.join(__dirname, fileToMove), (err) => {
+    fs.rm(fileToMove, (err) => {
       if (err) {
         throw new Error(err);
       }
