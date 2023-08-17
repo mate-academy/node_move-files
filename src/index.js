@@ -14,6 +14,34 @@ function moveFile() {
   }
 
   const content = fs.readFileSync(fileToMove);
+  const writeFile = (path) => {
+    fs.writeFileSync(
+      path + getFileExtension(),
+      content,
+      (err) => {
+        if (err) {
+          throw new Error(err);
+        }
+      },
+    );
+  };
+  const removeFile = (path) => {
+    fs.rm(path, (err) => {
+      if (err) {
+        throw new Error(err);
+      }
+    });
+  };
+
+  function getFileExtension() {
+    const parts = fileToMove.split('.');
+    const extension = selectedPath.split('.')
+      .filter(elem => elem.trim() !== '').length > 1
+      ? ''
+      : `.${parts[parts.length - 1]}`;
+
+    return extension;
+  };
 
   if (fs.existsSync(selectedPath)) {
     fs.stat(selectedPath, (error, stats) => {
@@ -22,34 +50,14 @@ function moveFile() {
       }
 
       if (stats.isDirectory()) {
-        fs.writeFileSync(
-          `${selectedPath}/${fileToMove}`,
-          content,
-          (err) => {
-            if (err) {
-              throw new Error(error);
-            }
-          },
-        );
+        writeFile(`${selectedPath}/${fileToMove}`);
       }
 
       if (stats.isFile()) {
-        fs.writeFileSync(
-          selectedPath,
-          content,
-          (err) => {
-            if (err) {
-              throw new Error(error);
-            }
-          },
-        );
+        writeFile(selectedPath);
       }
 
-      fs.rm(fileToMove, (err) => {
-        if (err) {
-          throw new Error(err);
-        }
-      });
+      removeFile(fileToMove);
     });
 
     return;
@@ -58,26 +66,9 @@ function moveFile() {
   const isFolder = selectedPath.endsWith('/');
 
   if (!isFolder) {
-    const parts = fileToMove.split('.');
-    const extension = selectedPath.split('.').length > 1
-      ? ''
-      : `.${parts[parts.length - 1]}`;
+    writeFile(selectedPath);
 
-    fs.writeFileSync(
-      (selectedPath + extension),
-      content,
-      (err) => {
-        if (err) {
-          throw new Error(err);
-        }
-      },
-    );
-
-    fs.rm(fileToMove, (err) => {
-      if (err) {
-        throw new Error(err);
-      }
-    });
+    removeFile(fileToMove);
   } else {
     console.error(`${selectedPath} does not exist`);
   }
