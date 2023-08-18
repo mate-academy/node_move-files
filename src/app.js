@@ -1,5 +1,6 @@
 'use strict';
-// eslint-disable-next-line max-len
+/* eslint-disable no-console */
+/* eslint-disable max-len */
 
 const fs = require('fs');
 const path = require('path');
