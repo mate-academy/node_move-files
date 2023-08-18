@@ -1,21 +1,25 @@
 'use strict';
+// eslint-disable-next-line max-len
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const fs = require('fs');
+const path = require('path');
 
-module.exports = sum;
+const sourcePath = process.argv[2];
+const destinationFolder = process.argv[3];
+const sourceFileName = path.basename(sourcePath);
+const destinationFolderName = path.basename(destinationFolder);
+const destinationPath = path.join(destinationFolder, sourceFileName);
+
+fs.existsSync(destinationFolder, (err) => {
+  if (err) {
+    throw new Error('Destination folder does not exist');
+  }
+});
+
+fs.rename(sourcePath, destinationPath, (err) => {
+  if (err) {
+    throw new Error('Failed to move file');
+  } else {
+    console.log(`The file ${sourceFileName} has been moved to ${destinationFolderName} folder`);
+  }
+});
