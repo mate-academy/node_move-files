@@ -1,21 +1,9 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+const { moveFile } = require('./moveFile');
 
-module.exports = sum;
+const myData = process.argv.slice(2);
+const src = myData[0];
+const dest = myData[1];
+
+moveFile(src, dest);
