@@ -7,7 +7,7 @@ const moveFile = (addressFile, addressMove) => {
     fs.renameSync(addressFile, addressMove);
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.log('Folder not found', addressMove);
+    console.log('Folder not found');
   }
 };
 
