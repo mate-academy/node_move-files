@@ -1,21 +1,32 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const fs = require('fs');
+
+function moveFiles(pathFrom, pathTo) {
+  let fileData = '';
+  let pathToNew = '' + pathTo;
+
+  try {
+    if (!fs.existsSync(pathTo)) {
+      throw new Error('destination directory does not exist(');
+    }
+  } catch (error) {}
+
+  if (pathTo[pathTo.length - 1] === '/') {
+    const arr = pathFrom.split('/');
+
+    pathToNew += arr[arr.length - 1];
+  }
+
+  try {
+    fileData = fs.readFileSync(pathFrom, 'utf8');
+  } catch (error) {}
+
+  try {
+    fs.writeFileSync(pathToNew, fileData);
+  } catch (error) {}
+
+  fs.rm(pathFrom, () => {});
 }
 
-module.exports = sum;
+module.exports = { moveFiles };
