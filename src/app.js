@@ -1,43 +1,15 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const { fsErrorsProcessor } = require('./fsErrorsProcessor');
-const { getFileName } = require('./getFileName');
-const { PATH_SLASH } = require('./constants');
+const minimist = require('minimist');
+const { moveFile } = require('./moveFile');
 
-function moveFile(curPath, desiredPath) {
-  const currentRelativePath = path.join(__dirname, curPath);
-  let desiredRelativePath = path.join(__dirname, desiredPath);
-  const fileName = getFileName(curPath);
-  const isDirectoryPath = fs.existsSync(desiredRelativePath);
+function startProgram() {
+  const { _: args } = minimist(process.argv.slice(2));
 
-  if (desiredRelativePath === currentRelativePath) {
-    return;
-  }
+  const movedFilePath = args[0];
+  const newFilePath = args[1];
 
-  if (desiredRelativePath[desiredRelativePath.length - 1] === PATH_SLASH) {
-    desiredRelativePath += fileName;
-  }
+  moveFile(movedFilePath, newFilePath);
+};
 
-  if (isDirectoryPath) {
-    desiredRelativePath += PATH_SLASH + fileName;
-  }
-
-  try {
-    const fileData = fs.readFileSync(currentRelativePath, 'utf-8');
-
-    fs.writeFileSync(desiredRelativePath, fileData);
-
-    fs.unlinkSync(currentRelativePath);
-  } catch (error) {
-    const errorMessage = fsErrorsProcessor(error);
-
-    // eslint-disable-next-line
-    console.error(errorMessage);
-
-    return;
-  };
-}
-
-moveFile('someFile.txt', '../')
+startProgram();
