@@ -29,6 +29,22 @@ function moveFile(src, dest) {
 
   fs.rename(source, destination, (err) => {
     if (err) {
+      if (err.code === 'ENOENT') {
+        fs.rename(source, destination, (renameErr) => {
+          if (renameErr) {
+            console.log(`Error renaming file: ${renameErr}`);
+
+            return;
+          }
+
+          console.log(
+            `File "${source}" renamed to "${destination}" successfully.`
+          );
+        });
+
+        return;
+      }
+
       console.log(`Error moving file: ${err}`);
 
       return;
