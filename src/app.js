@@ -1,21 +1,14 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
+const { moveFile } = require('./moveFile.js');
+const [sourcePath, destinationPath] = process.argv.slice(2);
+
+if (!sourcePath || !destinationPath) {
+  throw new Error('Function needs two parametrs.');
 }
 
-module.exports = sum;
+if (sourcePath === destinationPath) {
+  return;
+};
+
+moveFile(sourcePath, destinationPath);
