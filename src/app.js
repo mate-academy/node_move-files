@@ -11,8 +11,9 @@ function moveFile(sourcePath, destinationPath) {
     return;
   }
 
-  const isDestinationDirectory = destinationPath.endsWith('/');
   let finalDestinationPath = destinationPath;
+
+  const isDestinationDirectory = fs.lstatSync(destinationPath).isDirectory();
 
   if (isDestinationDirectory) {
     const sourceFileName = path.basename(sourcePath);
