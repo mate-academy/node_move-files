@@ -1,21 +1,37 @@
 'use strict';
 
-/**
- * Implement sum function:
- *
- * Function takes 2 numbers and returns their sum
- *
- * sum(1, 2) === 3
- * sum(1, 11) === 12
- *
- * @param {number} a
- * @param {number} b
- *
- * @return {number}
- */
-function sum(a, b) {
-  // write code here
-  return a + b;
-}
+/* es-lint-disable no-console */
+const fs = require('fs').promises;
+const path = require('path');
 
-module.exports = sum;
+const moveFile = async() => {
+  const args = process.argv.slice(2);
+  const [source, destination] = args;
+
+  const sourceAbsolutePath = path.resolve(source);
+  const destinationAbsolutePath = path.resolve(destination);
+
+  try {
+    await fs.access(sourceAbsolutePath);
+
+    const isDirectory = destination.endsWith('/');
+
+    const finalDestination = isDirectory
+      ? path.join(destinationAbsolutePath, path.basename(sourceAbsolutePath))
+      : destinationAbsolutePath;
+
+    const destinationDirectory = path.dirname(finalDestination);
+
+    try {
+      await fs.access(destinationDirectory);
+    } catch (err) {
+      throw new Error(err);
+    }
+
+    fs.rename(sourceAbsolutePath, finalDestination);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
+moveFile();
