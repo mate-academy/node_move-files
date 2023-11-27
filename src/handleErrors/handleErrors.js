@@ -30,7 +30,7 @@ const handleDestErrors = async(path, filePath) => {
     throw new Error(chalk.bgRed('No such directory...'));
   }
 
-  if (newFile.isExist) {
+  if (newFile.isExist && newFile.isFile) {
     throw new Error(chalk.bgRed('File already exist - ' + path));
   }
 };

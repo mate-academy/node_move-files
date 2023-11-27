@@ -2,7 +2,6 @@
 
 'use strict';
 
-const readline = require('readline');
 const fs = require('fs').promises;
 const p = require('path');
 const chalk = require('chalk');
@@ -12,18 +11,6 @@ const {
   handleFileErrors,
   handleDestErrors,
 } = require('./handleErrors/handleErrors');
-
-const terminal = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-const setPromptAndPrompt = () => {
-  terminal.setPrompt(
-    chalk.blue('Enter the source and destination separated by a space: ')
-  );
-  terminal.prompt();
-};
 
 const handleFileRenaming = async(filePath, newName) => {
   const indexBeforeName = filePath.lastIndexOf('/');
@@ -36,8 +23,6 @@ const handleFileRenaming = async(filePath, newName) => {
     console.log(
       chalk.bgGreen(`Successfully renamed from ${oldName} to ${newName}`)
     );
-
-    terminal.close();
   } catch (err) {
     console.error(err);
   }
@@ -58,14 +43,12 @@ const handleFileMoving = async(filePath, destination) => {
     await fs.rm(filePath);
 
     console.log(chalk.bgGreen('Moved ' + filePath + ' to ' + newFilePath));
-    terminal.close();
   } catch (err) {
     console.log(err);
   }
 };
 
-const handleInput = async(input) => {
-  const [filePath, destination] = input.split(' ');
+const handleInput = async(filePath, destination) => {
   const basePath = getBasePath(filePath);
   const dest = await pathInfo(p.join(basePath, destination));
 
@@ -80,17 +63,13 @@ const handleInput = async(input) => {
     }
   } catch (err) {
     console.log(err);
-    setPromptAndPrompt();
   }
 };
 
 const app = () => {
-  console.log(`Current directory - ${__dirname}`);
-  console.log(`Example of prompt - ./src/d/3.txt ./src/s/2.txt`);
+  const [filePath, destination] = process.argv.slice(2);
 
-  setPromptAndPrompt();
-
-  terminal.on('line', handleInput);
+  handleInput(filePath, destination);
 };
 
 app();
