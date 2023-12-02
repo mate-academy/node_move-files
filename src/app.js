@@ -12,7 +12,7 @@ const processPathToPaste = (pathToPasteW) => {
   const pathToPasteArr = pathToPasteW.split('/');
   let checkIfDirExist = '';
 
-  if (pathToPasteArr[pathToPasteArr.length - 1] !== '/' && pathToPasteW.includes('/')) {
+  if (pathToPaste[pathToPaste.length - 1] !== '/' && pathToPasteW.includes('/')) {
     pathToPasteArr[pathToPasteArr.length - 1] = '';
     checkIfDirExist = pathToPasteArr.join('/');
   }
