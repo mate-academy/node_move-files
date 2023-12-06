@@ -1,37 +1,38 @@
 'use strict';
 
- /* es-lint-disable no-console */
- const fs = require('fs').promises;
- const path = require('path');
+/* eslint-disable no-console */
+const fs = require('fs').promises;
+const path = require('path');
 
- const moveFile = async() => {
-   const args = process.argv.slice(2);
-   const [source, destination] = args;
+const moveFile = async () => {
+  const args = process.argv.slice(2);
+  const [source, destination] = args;
 
-   const sourceAbsolutePath = path.resolve(source);
-   const destinationAbsolutePath = path.resolve(destination);
+  const sourceAbsolutePath = path.resolve(source);
+  const destinationAbsolutePath = path.resolve(destination);
 
-   try {
-     await fs.access(sourceAbsolutePath);
+  try {
+    await fs.access(sourceAbsolutePath);
 
-     const isDirectory = destination.endsWith('/');
+    const isDirectory = destination.endsWith('/');
+    const finalDestination = isDirectory
+      ? path.join(destinationAbsolutePath, path.basename(sourceAbsolutePath))
+      : destinationAbsolutePath;
 
-     const finalDestination = isDirectory
-       ? path.join(destinationAbsolutePath, path.basename(sourceAbsolutePath))
-       : destinationAbsolutePath;
+    const destinationDirectory = path.dirname(finalDestination);
 
-     const destinationDirectory = path.dirname(finalDestination);
+    try {
+      await fs.access(destinationDirectory);
+    } catch (err) {
+      throw new Error(`Destination directory does not exist: ${destinationDirectory}`);
+    }
 
-     try {
-       await fs.access(destinationDirectory);
-     } catch (err) {
-       throw new Error(err);
-     }
+    await fs.rename(sourceAbsolutePath, finalDestination);
 
-     fs.rename(sourceAbsolutePath, finalDestination);
-   } catch (err) {
-     throw new Error(err);
-   }
- };
+    console.log(`Successfully moved ${sourceAbsolutePath} to ${finalDestination}`);
+  } catch (err) {
+    throw new Error(`Error moving file: ${err.message}`);
+  }
+};
 
- moveFile();
+moveFile();
