@@ -4,6 +4,24 @@
 const fs = require('fs').promises;
 const path = require('path');
 
+const fileExists = async (filePath) => {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+const checkAndCreateDirectory = async (directoryPath) => {
+  try {
+    await fs.access(directoryPath);
+  } catch (err) {
+    throw new Error(`Destination directory does not exist:
+      ${directoryPath}`);
+  }
+};
+
 const moveFile = async () => {
   const args = process.argv.slice(2);
   const [source, destination] = args;
@@ -12,7 +30,9 @@ const moveFile = async () => {
   const destinationAbsolutePath = path.resolve(destination);
 
   try {
-    await fs.access(sourceAbsolutePath);
+    if (!(await fileExists(sourceAbsolutePath))) {
+      throw new Error(`Source file does not exist: ${sourceAbsolutePath}`);
+    }
 
     const isDirectory = destination.endsWith('/');
     const finalDestination = isDirectory
@@ -21,15 +41,12 @@ const moveFile = async () => {
 
     const destinationDirectory = path.dirname(finalDestination);
 
-    try {
-      await fs.access(destinationDirectory);
-    } catch (err) {
-      throw new Error(`Destination directory does not exist: ${destinationDirectory}`);
-    }
+    await checkAndCreateDirectory(destinationDirectory);
 
     await fs.rename(sourceAbsolutePath, finalDestination);
 
-    console.log(`Successfully moved ${sourceAbsolutePath} to ${finalDestination}`);
+    console.log(`Successfully moved
+      ${sourceAbsolutePath} to ${finalDestination}`);
   } catch (err) {
     throw new Error(`Error moving file: ${err.message}`);
   }
