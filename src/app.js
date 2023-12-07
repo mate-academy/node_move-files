@@ -4,15 +4,6 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const fileExists = async (filePath) => {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch (err) {
-    return false;
-  }
-};
-
 const checkAndCreateDirectory = async (directoryPath) => {
   try {
     await fs.access(directoryPath);
