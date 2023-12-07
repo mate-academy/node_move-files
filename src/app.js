@@ -30,8 +30,9 @@ const moveFile = async () => {
   const destinationAbsolutePath = path.resolve(destination);
 
   try {
-    if (!(await fileExists(sourceAbsolutePath))) {
-      throw new Error(`Source file does not exist: ${sourceAbsolutePath}`);
+    if (!(await fs.access(filePath))) {
+      throw new Error(`Source file does not exist:
+        ${sourceAbsolutePath}`);
     }
 
     const isDirectory = destination.endsWith('/');
