@@ -25,11 +25,9 @@ function moveFile() {
           );
         } else {
           fs.rename(srcPath, finalDestPath, (err) => {
-            if (err) {
-              console.error('Error found:', err);
-            } else {
-              console.log(`Successfully moved to ${dest}`);
-            }
+            (err)
+              ? console.error('Error found:', err)
+              : console.log(`Successfully moved to ${dest}`);
           });
         }
       });
