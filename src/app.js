@@ -17,7 +17,10 @@ if (!destination) {
 }
 
 if (destination[destination.length - 1] === '/') {
-  moveFiles(source, destination + source);
+  const pathArray = source.split('/');
+  const fileName = pathArray[pathArray.length - 1];
+
+  moveFiles(source, destination + fileName);
 } else {
   moveFiles(source, destination);
 }
