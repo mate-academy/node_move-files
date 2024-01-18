@@ -51,7 +51,6 @@ describe('File Move Tests', () => {
     expect(fs.existsSync(newPath)).toBe(true);
   });
 
-  // eslint-disable-next-line max-len
   test('should throw error if destination directory does not exist', async() => {
     const nonExistingDir = path.join(tempDir, 'nonExistingDir', 'test.txt');
 
