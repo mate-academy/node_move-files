@@ -12,4 +12,6 @@ try {
   console.error(error);
 }
 
-moveFile(...process.argv.slice(2));
+const [oldPath, newPath] = moveFile(...process.argv.slice(2));
+
+console.info(`Successfully moved ${oldPath} to ${newPath}`);

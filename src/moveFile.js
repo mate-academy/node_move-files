@@ -6,12 +6,19 @@ module.exports = {
   moveFile,
 };
 
-function moveFile(src, dst) {
-  /* eslint-disable no-console */
-  fs.rename(src, dst, (err) => {
-    if (err) {
-      throw err;
-    }
-    console.info(`Successfully moved ${src} to ${dst}`);
-  });
+function moveFile(src = '', dst = '') {
+  let newPath = dst;
+  const srcFileName = (src.match(/[\w\.]*$/g) || [''])[0]; //eslint-disable-line
+
+  if (dst.charAt(dst.length - 1) === '/') {
+    newPath += srcFileName;
+  }
+
+  if (fs.existsSync(dst)) {
+    newPath = newPath.concat('/', srcFileName);
+  }
+
+  fs.renameSync(src, newPath);
+
+  return [src, newPath];
 }
