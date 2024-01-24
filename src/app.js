@@ -10,15 +10,7 @@ const move = async() => {
   let newUrl;
   const oldUrl = path.join(__dirname, from);
 
-  const checkPossibleDir = () => {
-    const checkIsDirect = path.join(__dirname, to, from);
-
-    const isDirectory = path.dirname(checkIsDirect);
-
-    return isDirectory;
-  };
-
-  const possibleDir = checkPossibleDir();
+  const possibleDir = checkIsPossibleDir(from, to);
 
   if (to.endsWith('/')) {
     newUrl = path.join(__dirname, to, from);
@@ -42,6 +34,8 @@ const move = async() => {
       return;
     } catch (error) {
       console.log('Error in renamed process');
+
+      return;
     }
   };
 
@@ -56,8 +50,15 @@ const move = async() => {
     // await fs.writeFile(newUrl, fileData);
     // await fs.unlink(oldUrl);
   } catch (err) {
-    console.error('Destination directory does not exist');
+    console.error('Directory does not exist');
   }
 };
 
 move();
+
+function checkIsPossibleDir(from, to) {
+  const possibleUrl = path.join(__dirname, to, from);
+  const possibleDir = path.dirname(possibleUrl);
+
+  return possibleDir;
+};
