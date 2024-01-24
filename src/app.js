@@ -7,6 +7,14 @@ const path = require('path');
 const move = async() => {
   const [from, to] = process.argv.slice(2);
 
+  if (from === to) {
+    throw new Error('The file cannot be moved to the same path');
+  }
+
+  if (!from || !to) {
+    throw new Error('The file cannot be moved without 2 parameters');
+  }
+
   let newUrl;
   const oldUrl = path.join(__dirname, from);
 
@@ -33,9 +41,7 @@ const move = async() => {
 
       return;
     } catch (error) {
-      console.log('Error in renamed process');
-
-      return;
+      throw new Error('Error in renamed process');
     }
   };
 
@@ -50,7 +56,7 @@ const move = async() => {
     // await fs.writeFile(newUrl, fileData);
     // await fs.unlink(oldUrl);
   } catch (err) {
-    console.error('Directory does not exist');
+    throw new Error('Directory does not exist');
   }
 };
 
