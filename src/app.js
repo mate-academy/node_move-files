@@ -11,6 +11,8 @@ const [pathFrom, pathTo] = argv.slice(2);
 async function moveFile(from, to) {
   if (!from || !to) {
     console.error('Missing arguments');
+
+    return;
   }
 
   if (from === to) {
