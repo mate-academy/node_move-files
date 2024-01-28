@@ -4,8 +4,12 @@ const fs = require('fs');
 const path = require('path');
 
 const moveFile = (src, dest) => {
-  if (!src || !dest || src === dest) {
+  if (src === dest) {
     return;
+  }
+
+  if (!src || !dest) {
+    throw new Error('Invalid arguments');
   }
 
   const srcPath = path.join(__dirname, src);
@@ -18,7 +22,7 @@ const moveFile = (src, dest) => {
   });
 
   fs.stat(destPath, (err, stats) => {
-    if (err && err.code !== 'ENOENT') {
+    if (err) {
       throw new Error(err.message);
     }
 
