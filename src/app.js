@@ -43,7 +43,7 @@ function moveFileProcess() {
     return console.error('The destination is not exist');
   }
 
-  moveFile(oldFile, nameFile);
+  moveFile(oldFile, newFile);
 };
 
 moveFileProcess();
