@@ -1,14 +1,16 @@
 /* eslint-disable no-console */
 'use strict';
 
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 
 const [from, to] = process.argv.slice(2);
 
-async function moveFiles(source, dest) {
+function moveFiles(source, dest) {
   if (!source || !dest) {
-    throw new Error('no params');
+    console.error('no params');
+
+    return;
   }
 
   if (source === dest) {
@@ -24,10 +26,10 @@ async function moveFiles(source, dest) {
   }
 
   try {
-    await fs.rename(fullPathSource, fullPathDest);
+    fs.renameSync(fullPathSource, fullPathDest);
     console.log('Success!');
   } catch (e) {
-    throw new Error(e);
+    console.error(e);
   };
 };
 
