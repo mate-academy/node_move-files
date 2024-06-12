@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 
-function app() {
+function moveFile() {
   if (process.argv.length < 4) {
     console.error('notEnoughArgs');
 
@@ -45,11 +45,13 @@ function app() {
     }
   }
 
-  if (from === (addExt ? path.join(to, path.basename(from)) : to)) {
+  const updatedTo = (addExt ? path.join(to, path.basename(from)) : to)
+
+  if (from === updatedTo) {
     return;
   }
 
-  fs.renameSync(from, addExt ? path.join(to, path.basename(from)) : to);
+  fs.renameSync(from, updatedTo);
 }
 
-app();
+moveFile();
