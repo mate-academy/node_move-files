@@ -14,3 +14,5 @@ Examples:
 - `node index file.txt ./existingDir/test` moves the file under `existingDir` with the name `test`.
 - `node index file.txt dir/` moves the file under the `dir`. In case `dir` does not exist an error is thrown.
 - `node index file.txt a` in case `a` is an existing directory `file.txt` will be moved to ./a/file.txt. If `a` does not exist the file will be renamed to `./a`
+
+    const checkDirectory = fs.isDirectory(newPath);
