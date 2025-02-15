@@ -12,9 +12,6 @@ async function moveFile() {
   }
 
   if (path.resolve(pathToFile) === path.resolve(pathToReplace)) {
-    // eslint-disable-next-line no-console
-    console.error('This is a similar path.');
-
     return;
   }
 
@@ -22,7 +19,7 @@ async function moveFile() {
   let newPathToReplace = pathToReplace;
 
   try {
-    const destStat = await fs.stat(newPathToReplace).catch(() => null);
+    const destStat = await fs.promises.stat(newPathToReplace).catch(() => null);
 
     if (
       (destStat && destStat.isDirectory()) ||
@@ -31,7 +28,7 @@ async function moveFile() {
       newPathToReplace = path.join(newPathToReplace, fileName);
     }
 
-    await fs.rename(pathToFile, newPathToReplace);
+    await fs.promises.rename(pathToFile, newPathToReplace);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(error);
