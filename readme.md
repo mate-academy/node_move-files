@@ -1,16 +1,23 @@
-# Move files
+# Move Files
 
-**Read [the guideline](https://github.com/mate-academy/js_task-guideline/blob/master/README.md) before start**
+## 🎮 About the Project
+I wrote an application that allows moving a file from one location to another. The app leverages Node.js to handle file system operations, enabling users to easily move files between directories.
 
-Write an app that will move a file from one location to another like Linux mv
-command: `mv file.txt ./someDir/` (this will create `file.txt` in `./someDir`
-and remove the source file).
-- If a destination contains `/` in the end it must be considered as a directory.
-- In case destination directory does not exist an error must be thrown.
-- The app must support only moving of files, and no additional options (flags).
+## 🚀 Tech Stack
+- **Node.js** (For building the application and handling file system operations)
 
-Examples:
-- `node index file.txt file2.txt` simply renames the file.
-- `node index file.txt ./existingDir/test` moves the file under `existingDir` with the name `test`.
-- `node index file.txt dir/` moves the file under the `dir`. In case `dir` does not exist an error is thrown.
-- `node index file.txt a` in case `a` is an existing directory `file.txt` will be moved to ./a/file.txt. If `a` does not exist the file will be renamed to `./a`
+## 🛠️ Tools & Dependencies
+- **ESLint** – For ensuring code quality and consistency  
+- **Prettier** – For automatic code formatting  
+- **Jest** – For testing the file moving functionality  
+
+## 📌 Features
+✅ Allows specifying source and destination locations for moving files  
+✅ Provides a simple command-line interface for file movement  
+✅ Handles errors such as invalid paths or file access issues  
+
+## 🌐 Demo
+To run the app, clone the repository and execute the file move operation locally using Node.js.
+
+## 📜 License
+This project is forked from 💻 [Mate Academy](https://github.com/mate-academy/node_move-files)
