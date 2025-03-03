@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-// write code here
 'use strict';
 
 const fs = require('fs');
@@ -7,24 +6,27 @@ const path = require('path');
 
 function moveFile(sourcePath, pathToMove) {
   if (!sourcePath || !pathToMove) {
-    console.error('Failed with only one argument');
+    console.error('Source path or destination path is missing.');
 
     return;
   }
 
-  if (sourcePath === pathToMove) {
+  if (!fs.existsSync(sourcePath) || fs.statSync(sourcePath).isDirectory()) {
+    console.error(
+      `Source path "${sourcePath}" does not exist or is a directory.`,
+    );
+
     return;
   }
 
   const absoluteSourcePath = path.resolve(sourcePath);
   let absolutePathToMove = path.resolve(pathToMove);
 
-  const isDir =
-    fs.existsSync(absolutePathToMove) &&
-    fs.statSync(absolutePathToMove).isDirectory();
-
   try {
-    if (isDir) {
+    if (
+      fs.existsSync(absolutePathToMove) &&
+      fs.statSync(absolutePathToMove).isDirectory()
+    ) {
       const fileName = path.basename(absoluteSourcePath);
 
       absolutePathToMove = path.join(absolutePathToMove, fileName);
@@ -32,7 +34,7 @@ function moveFile(sourcePath, pathToMove) {
 
     fs.renameSync(absoluteSourcePath, absolutePathToMove);
   } catch (err) {
-    console.error(`Moving failed with an err ${err}`);
+    console.error(`Moving failed with an error: ${err.message}`);
   }
 }
 
