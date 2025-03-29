@@ -4,15 +4,17 @@
 const fs = require('fs');
 const path = require('path');
 
-function move(source, destination) {
+async function move(source, destination) {
   if (!fs.existsSync(source)) {
     console.error(`Error: Source file "${source}" does not exist.`);
 
     return;
   }
 
-  if (source === destination) {
-    // console.error(`Error: Source and destination are the same.`);
+  if (!fs.existsSync(path.dirname(destination))) {
+    console.error(
+      `Error: Destination directory "${destination}" does not exist.`,
+    );
 
     return;
   }
@@ -23,11 +25,11 @@ function move(source, destination) {
     finalDestination = path.join(destination, path.basename(source));
   }
 
-  fs.rename(source, finalDestination, (err) => {
-    if (err) {
-      console.error(`Error: Failed to move file. ${err.message}`);
-    }
-  });
+  try {
+    await fs.promises.rename(source, finalDestination);
+  } catch (err) {
+    console.error(`Error: Failed to move file. ${err.message}`);
+  }
 }
 
 const sourceFile = process.argv[2];
