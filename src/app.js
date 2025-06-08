@@ -48,6 +48,8 @@ function moveFile() {
     if (endsWithSlash) {
       console.error('Destination directory does not exist');
       // process.exit(1);
+
+      return;
     }
 
     const parentDir = path.dirname(destinationPath);
@@ -55,6 +57,8 @@ function moveFile() {
     if (!fs.existsSync(parentDir)) {
       console.error('Destination parent directory does not exist');
       // process.exit(1);
+
+      return;
     }
   }
 
@@ -64,6 +68,8 @@ function moveFile() {
   } catch (err) {
     console.error(`Failed to move file: ${err.message}`);
     // process.exit(1);
+
+    return;
   }
 }
 
