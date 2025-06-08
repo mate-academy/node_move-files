@@ -43,7 +43,6 @@ function moveFile() {
       finalDestination = destinationPath;
     }
   } else {
-    // Destination does not exist
     const endsWithSlash = destinationPath.endsWith(path.sep);
 
     if (endsWithSlash) {
@@ -53,9 +52,7 @@ function moveFile() {
 
     const parentDir = path.dirname(destinationPath);
 
-    if (fs.existsSync(parentDir)) {
-      // OK to rename
-    } else {
+    if (!fs.existsSync(parentDir)) {
       console.error('Destination parent directory does not exist');
       // process.exit(1);
     }
