@@ -6,7 +6,7 @@ const path = require('path');
 function fail(message) {
   // eslint-disable-next-line no-console
   console.error(message);
-  process.exitCode = 0;
+  process.exit(0);
 }
 
 (function main() {
