@@ -3,64 +3,60 @@
 const fs = require('fs');
 const path = require('path');
 
-const args = process.argv.slice(2);
-
-if (args.length !== 2) {
+function fail(message) {
   // eslint-disable-next-line no-console
-  console.error('Invalid number of arguments');
-  process.exit(1);
+  console.error(message);
+  process.exitCode = 0;
 }
 
-const [source, destination] = args;
+(function main() {
+  const args = process.argv.slice(2);
 
-const src = path.resolve(source);
-const dest = path.resolve(destination);
-
-if (!fs.existsSync(src)) {
-  // eslint-disable-next-line no-console
-  console.error('Source file does not exist');
-  process.exit(1);
-}
-
-if (!fs.statSync(src).isFile()) {
-  // eslint-disable-next-line no-console
-  console.error('Source is not a file');
-  process.exit(1);
-}
-
-let finalDest;
-
-if (
-  destination.endsWith(path.sep) ||
-  (fs.existsSync(dest) && fs.statSync(dest).isDirectory())
-) {
-  if (!fs.existsSync(dest)) {
-    // eslint-disable-next-line no-console
-    console.error('Destination does not exist');
-    process.exit(1);
+  if (args.length !== 2) {
+    return fail('Invalid number of arguments');
   }
 
-  finalDest = path.join(dest, path.basename(src));
-} else {
-  finalDest = dest;
+  const [sourceArg, destinationArg] = args;
+  const sourcePath = path.resolve(sourceArg);
+  const destinationPath = path.resolve(destinationArg);
 
-  const parentDir = path.dirname(finalDest);
-
-  if (!fs.existsSync(parentDir)) {
-    // eslint-disable-next-line no-console
-    console.error('Destination directory does not exist');
-    process.exit(1);
+  if (!fs.existsSync(sourcePath)) {
+    return fail('Source file does not exist');
   }
-}
 
-if (src === finalDest) {
-  process.exit(0);
-}
+  if (!fs.statSync(sourcePath).isFile()) {
+    return fail('Source is not a file');
+  }
 
-try {
-  fs.renameSync(src, finalDest);
-} catch (err) {
-  // eslint-disable-next-line no-console
-  console.error(`Error moving file: ${err.message}`);
-  process.exit(1);
-}
+  const destinationExists = fs.existsSync(destinationPath);
+  const destinationIsDirectory =
+    destinationExists && fs.statSync(destinationPath).isDirectory();
+  const destinationEndsWithSlash =
+    destinationArg.endsWith('/') || destinationArg.endsWith(path.sep);
+
+  let finalDestination;
+
+  if (destinationIsDirectory || destinationEndsWithSlash) {
+    if (!destinationIsDirectory) {
+      return fail('Destination directory does not exist');
+    }
+    finalDestination = path.join(destinationPath, path.basename(sourcePath));
+  } else {
+    const destDir = path.dirname(destinationPath);
+
+    if (!fs.existsSync(destDir)) {
+      return fail('Destination directory does not exist');
+    }
+    finalDestination = destinationPath;
+  }
+
+  if (sourcePath === finalDestination) {
+    return;
+  }
+
+  try {
+    fs.renameSync(sourcePath, finalDestination);
+  } catch (err) {
+    return fail(`Cannot move file: ${err.message}`);
+  }
+})();
