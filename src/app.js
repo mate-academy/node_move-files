@@ -29,8 +29,7 @@ function moveFile(file, location) {
     if (isDestinationDir) {
       const targetPath = path.join(location, path.basename(file));
 
-      fs.copyFileSync(file, targetPath);
-      fs.rmSync(file);
+      fs.renameSync(file, targetPath);
 
       // eslint-disable-next-line no-console
       console.log(`Moved file to directory: ${targetPath}`);
@@ -45,7 +44,7 @@ function moveFile(file, location) {
       fs.renameSync(file, location);
 
       // eslint-disable-next-line no-console
-      console.log(`File renamed/moved to: ${location}`);
+      console.log(`File renamed to: ${location}`);
 
       return;
     }
