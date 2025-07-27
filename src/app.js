@@ -81,4 +81,6 @@ const copyFile = async () => {
   }
 };
 
+copyFile();
+
 module.exports = { copyFile };
