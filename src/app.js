@@ -1,86 +1,55 @@
-'use strict';
-
+/* eslint-disable no-console */
 const fs = require('fs').promises;
 const path = require('path');
 
-const copyFile = async () => {
-  const [currentLocation, locationToCopy] = process.argv.slice(2);
+const moveFiles = async () => {
+  const sourcePath = process.argv[2];
+  let destinationPath = process.argv[3];
 
-  if (currentLocation === undefined || locationToCopy === undefined) {
-    console.error('Not enough parameters');
-
-    return;
-  }
-
-  const resolvedSource = path.resolve(currentLocation);
-  const resolvedDestination = path.resolve(locationToCopy);
-
-  if (resolvedSource === resolvedDestination) {
-    return;
-  }
-
-  try {
-    await fs.access(resolvedSource);
-  } catch (err) {
-    console.error(err);
+  if (!sourcePath || !destinationPath) {
+    console.error(
+      'Missing arguments: please provide source and destination paths',
+    );
 
     return;
   }
 
   try {
-    const sourceStats = await fs.stat(resolvedSource);
+    const sourceStat = await fs.stat(sourcePath);
 
-    if (sourceStats.isDirectory()) {
-      console.error('Source is a directory');
+    if (!sourceStat.isFile()) {
+      console.error('Source path is not a file:', sourcePath);
 
       return;
     }
-  } catch (err) {
-    console.error(err);
 
-    return;
-  }
-
-  const content = await fs.readFile(resolvedSource, 'utf-8');
-
-  try {
-    let destinationStats;
+    let destinationStat;
 
     try {
-      destinationStats = await fs.stat(resolvedDestination);
-
-      if (destinationStats.isDirectory()) {
-        await fs.writeFile(
-          path.join(resolvedDestination, path.basename(resolvedSource)),
-          content,
-        );
-      } else {
-        await fs.writeFile(resolvedDestination, content);
-      }
+      destinationStat = await fs.stat(destinationPath);
     } catch (err) {
-      if (err.code === 'ENOENT') {
-        const destinationDir = path.dirname(resolvedDestination);
-
-        try {
-          await fs.access(destinationDir);
-        } catch {
-          console.error('Destination directory does not exist');
-
-          return;
-        }
-
-        await fs.writeFile(resolvedDestination, content);
-      } else {
+      if (err.code !== 'ENOENT') {
         throw err;
       }
     }
 
-    await fs.unlink(resolvedSource);
+    if (destinationStat && destinationStat.isDirectory()) {
+      const fileName = path.basename(sourcePath);
+
+      destinationPath = path.join(destinationPath, fileName);
+    }
+
+    await fs.rename(sourcePath, destinationPath);
+    console.log('File moved successfully');
   } catch (err) {
-    console.error(err);
+    if (err.code === 'ENOENT') {
+      console.error('File or directory does not exist');
+    } else {
+      console.error('Error moving file:', err.message);
+    }
   }
 };
 
-copyFile();
+moveFiles();
 
-module.exports = { copyFile };
+module.exports = { moveFiles };
