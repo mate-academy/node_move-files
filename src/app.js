@@ -30,10 +30,10 @@ async function moveFile() {
       const newPath = path.join(dest, path.basename(src));
 
       await fs.rename(src, newPath);
-      console.log('faile remove succses')
+      console.log("File moved successfully" );
     } else {
       await fs.rename(src, dest);
-      console.log('faile remove succses')
+      console.log("File moved successfully" );
     }
   } catch {
     const destDir = path.dirname(dest);
@@ -47,7 +47,7 @@ async function moveFile() {
     }
 
     await fs.rename(src, dest);
-    console.log('faile remove succses')
+    console.log("File moved successfully" );
   }
 }
 
