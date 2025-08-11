@@ -76,13 +76,12 @@ async function moveFiles() {
       return;
     }
   } catch (err) {
-  }
-
-  // just renaming source to destination files in other cases
-  try {
-    await fs.rename(source, destination);
-  } catch (err) {
-    console.error('Error renaming/moving file:', err.message);
+    // just renaming source to destination files in other cases
+    try {
+      await fs.rename(source, destination);
+    } catch (error) {
+      console.error('Error renaming/moving file:', error.message);
+    }
   }
 }
 
