@@ -2,6 +2,8 @@
 
 **Read [the guideline](https://github.com/mate-academy/js_task-guideline/blob/master/README.md) before start**
 
+
+
 Write an app that will move a file from one location to another like Linux mv
 command: `mv file.txt ./someDir/` (this will create `file.txt` in `./someDir`
 and remove the source file).
