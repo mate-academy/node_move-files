@@ -32,8 +32,12 @@ async function moveFile() {
         destinationPath = path.join(moveToPath, fileName);
       }
     } catch (error) {
-      // eslint-disable-next-line
-      console.error(`Error: ${error.message}`);
+      if (error.code !== 'ENOENT') {
+        // eslint-disable-next-line
+        console.error(`Error: ${error.message}`);
+
+        return;
+      }
     }
 
     await fs.writeFile(destinationPath, data);
