@@ -5,7 +5,8 @@ const path = require('path');
 const [, , src, dest] = process.argv;
 
 if (!src || !dest) {
-  throw new Error('Usage: node index <source> <destination>');
+  console.error('Usage: node index <source> <destination>');
+  process.exit(1);
 }
 
 try {
