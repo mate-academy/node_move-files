@@ -11,19 +11,64 @@ function moveFile(source, destination) {
     return;
   }
 
-  if (source !== destination) {
-    try {
-      if (
-        fs.existsSync(destination) &&
-        fs.statSync(destination).isDirectory()
-      ) {
-        fs.renameSync(source, path.join(destination, path.basename(source)));
-      } else {
-        fs.renameSync(source, destination);
-      }
-    } catch (err) {
-      console.error(`Error: ${err.message}`);
+  let sourceStat;
+
+  try {
+    sourceStat = fs.statSync(source);
+  } catch (err) {
+    console.error(`Error: Cannot stat source: ${err.message}`);
+
+    return;
+  }
+
+  if (!sourceStat.isFile()) {
+    console.error(`Source is not a file: ${source}`);
+
+    return;
+  }
+
+  if (source === destination) {
+    return;
+  }
+
+  const isDestDirBySlash =
+    destination.endsWith(path.sep) ||
+    (path.sep === '\\' && destination.endsWith('/'));
+
+  let destIsDirectory = false;
+  let destDirPath = destination;
+
+  if (isDestDirBySlash) {
+    if (
+      !fs.existsSync(destination) ||
+      !fs.statSync(destination).isDirectory()
+    ) {
+      console.error(`Destination directory does not exist: ${destination}`);
+
+      return;
     }
+    destIsDirectory = true;
+    destDirPath = destination;
+  } else if (
+    fs.existsSync(destination) &&
+    fs.statSync(destination).isDirectory()
+  ) {
+    destIsDirectory = true;
+    destDirPath = destination;
+  }
+
+  let finalDest;
+
+  if (destIsDirectory) {
+    finalDest = path.join(destDirPath, path.basename(source));
+  } else {
+    finalDest = destination;
+  }
+
+  try {
+    fs.renameSync(source, finalDest);
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
   }
 }
 
