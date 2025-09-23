@@ -62,7 +62,12 @@ function move() {
     return;
   }
 
-  fs.renameSync(sourceFile, normalizedDest);
+  const renameFile = path.join(
+    path.dirname(normalizedSource),
+    path.basename(destinationFile),
+  );
+
+  fs.renameSync(sourceFile, renameFile);
 }
 
 move();
