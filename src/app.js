@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 function move() {
-  if (process.argv.slice(2).length > 2) {
+  if (process.argv.slice(2).length !== 2) {
     // eslint-disable-next-line no-console
     console.error(
       'Wrong number of arguments is supplied, should pass 2 arguments',
@@ -12,13 +12,6 @@ function move() {
   }
 
   const [sourceFile, destinationFile] = process.argv.slice(2);
-
-  if (!sourceFile || !destinationFile) {
-    // eslint-disable-next-line no-console
-    console.error('One or two params is undefined');
-
-    return;
-  }
 
   if (!fs.existsSync(sourceFile)) {
     // eslint-disable-next-line no-console
@@ -62,12 +55,7 @@ function move() {
     return;
   }
 
-  const renameFile = path.join(
-    path.dirname(normalizedSource),
-    path.basename(destinationFile),
-  );
-
-  fs.renameSync(sourceFile, renameFile);
+  fs.renameSync(sourceFile, normalizedDest);
 }
 
 move();
