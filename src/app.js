@@ -6,56 +6,59 @@ const fs = require('fs/promises');
 const path = require('path');
 
 async function move(oldPath, newPath) {
-  if (!oldPath || !newPath) {
-    console.error('Source and destination are required.');
-
-    return;
-  }
-
-  if (oldPath === newPath) {
-    return;
-  }
-
   try {
-    const src = oldPath;
-    let dest = newPath;
-    const srcStats = await fs.stat(src);
+    if (!oldPath || !newPath) {
+      throw new Error('Exactly two arguments are required');
+    }
 
-    if (!srcStats.isFile()) {
-      console.error('Source is not a file');
-
+    if (oldPath === newPath) {
       return;
     }
 
-    try {
+    const srcStats = await fs.stat(oldPath);
+
+    if (!srcStats.isFile()) {
+      throw new Error('Source is not a file');
+    }
+
+    const trailing = newPath.endsWith(path.sep) || newPath.endsWith('/');
+    let dest;
+
+    if (trailing) {
       const destStats = await fs.stat(newPath);
 
-      if (destStats.isDirectory()) {
-        const baseName = path.basename(src);
-
-        dest = path.join(newPath, baseName);
+      if (!destStats.isDirectory()) {
+        throw new Error('Destination is not a directory');
       }
-    } catch (err) {
-      const destDir = path.dirname(newPath);
 
+      dest = path.join(newPath, path.basename(oldPath));
+    } else {
       try {
-        const dirStats = await fs.stat(destDir);
+        const destStats = await fs.stat(newPath);
 
-        if (!dirStats.isDirectory()) {
-          console.error('Destination directory does not exist');
-
-          return;
+        if (destStats.isDirectory()) {
+          dest = path.join(newPath, path.basename(oldPath));
+        } else {
+          dest = newPath;
         }
-      } catch {
-        console.error('Destination directory does not exist');
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          const destDir = path.dirname(newPath);
+          const dirStats = await fs.stat(destDir);
 
-        return;
+          if (!dirStats.isDirectory()) {
+            throw new Error('Destination directory does not exist');
+          }
+
+          dest = newPath;
+        } else {
+          throw err;
+        }
       }
-
-      dest = newPath;
     }
-    await fs.rename(src, dest);
-    console.log(`Moved ${src} to ${dest}`);
+
+    await fs.rename(oldPath, dest);
+    console.log(`Moved ${oldPath} to ${dest}`);
   } catch (err) {
     console.error('Move error:', err.message);
   }
@@ -70,7 +73,10 @@ if (require.main === module) {
 
   const [oldPath, newPath] = args;
 
-  move(oldPath, newPath);
+  move(oldPath, newPath).catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 }
 
 module.exports = { move };
