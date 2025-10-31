@@ -58,6 +58,14 @@ function moveFile(src, dest) {
 
       return;
     }
+
+    const parentStats = fs.statSync(parentDir, { throwIfNoEntry: false });
+
+    if (!parentStats || !parentStats.isDirectory()) {
+      console.error(new Error('Призначення не є каталогом'));
+
+      return;
+    }
   }
 
   try {
