@@ -40,6 +40,12 @@ function moveFile(src, dest) {
     if (destinationStats.isDirectory()) {
       finalDestination = path.join(dest, path.basename(src));
     } else {
+      if (dest.endsWith(path.sep) || dest.endsWith('/')) {
+        console.error(new Error('Призначення не є каталогом'));
+
+        return;
+      }
+
       finalDestination = dest;
     }
   } else {
