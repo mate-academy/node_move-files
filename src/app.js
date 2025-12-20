@@ -10,8 +10,21 @@ function app() {
     return;
   }
 
-  let destination = newPathInput;
+  if (!fs.existsSync(oldPath)) {
+    console.error('Source does not exist');
 
+    return;
+  }
+
+  const oldStat = fs.statSync(oldPath);
+
+  if (!oldStat.isFile()) {
+    console.error('Source must be a file');
+
+    return;
+  }
+
+  let destination = newPathInput;
   const stat = fs.existsSync(newPathInput) && fs.statSync(newPathInput);
 
   if ((stat && stat.isDirectory()) || newPathInput.endsWith('/')) {
