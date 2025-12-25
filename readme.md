@@ -9,6 +9,7 @@ and remove the source file).
 - In case destination directory does not exist an error must be thrown.
 - The app must support only moving of files, and no additional options (flags).
 
+
 Examples:
 - `node index file.txt file2.txt` simply renames the file.
 - `node index file.txt ./existingDir/test` moves the file under `existingDir` with the name `test`.
