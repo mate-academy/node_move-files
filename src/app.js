@@ -9,61 +9,47 @@ try {
   const args = process.argv.slice(2);
 
   if (args.length !== 2) {
-    console.error('Error');
-  } else {
-    const [srcRaw, destRaw] = args;
+    throw new Error('Error');
+  }
 
-    const src = path.resolve(srcRaw);
-    const destResolved = path.resolve(destRaw);
+  const [srcRaw, destRaw] = args;
 
-    const srcStat = fs.statSync(src);
+  const src = path.resolve(srcRaw);
+  const destResolved = path.resolve(destRaw);
 
-    if (!srcStat.isFile()) {
-      console.error('Error');
-    } else {
-      const endsWithSlash = destRaw.endsWith('/') || destRaw.endsWith('\\');
+  const srcStat = fs.statSync(src);
 
-      let finalDest = destResolved;
+  if (!srcStat.isFile()) {
+    throw new Error('Error');
+  }
 
-      if (endsWithSlash) {
-        if (
-          !fs.existsSync(destResolved) ||
-          !fs.statSync(destResolved).isDirectory()
-        ) {
-          console.error('Error');
-        } else {
-          finalDest = path.join(destResolved, path.basename(src));
-        }
-      } else if (
-        fs.existsSync(destResolved) &&
-        fs.statSync(destResolved).isDirectory()
-      ) {
-        finalDest = path.join(destResolved, path.basename(src));
-      } else {
-        const parentDir = path.dirname(destResolved);
+  const endsWithSlash = destRaw.endsWith('/') || destRaw.endsWith('\\');
+  let finalDest = destResolved;
 
-        if (
-          !fs.existsSync(parentDir) ||
-          !fs.statSync(parentDir).isDirectory()
-        ) {
-          console.error('Error');
-        }
-      }
-
-      if (finalDest === src) {
-      } else if (
-        !endsWithSlash ||
-        (endsWithSlash &&
-          fs.existsSync(destResolved) &&
-          fs.statSync(destResolved).isDirectory())
-      ) {
-        if (fs.existsSync(finalDest) && fs.statSync(finalDest).isFile()) {
-          fs.unlinkSync(finalDest);
-        }
-
-        fs.renameSync(src, finalDest);
-      }
+  if (endsWithSlash) {
+    if (
+      !fs.existsSync(destResolved) ||
+      !fs.statSync(destResolved).isDirectory()
+    ) {
+      throw new Error('Error');
     }
+
+    finalDest = path.join(destResolved, path.basename(src));
+  } else if (
+    fs.existsSync(destResolved) &&
+    fs.statSync(destResolved).isDirectory()
+  ) {
+    finalDest = path.join(destResolved, path.basename(src));
+  } else {
+    const parentDir = path.dirname(destResolved);
+
+    if (!fs.existsSync(parentDir) || !fs.statSync(parentDir).isDirectory()) {
+      throw new Error('Error');
+    }
+  }
+
+  if (finalDest !== src) {
+    fs.renameSync(src, finalDest);
   }
 } catch (err) {
   console.error(err);
