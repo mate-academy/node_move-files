@@ -32,6 +32,8 @@ if (srcStat.isDirectory()) {
 if (destArg.endsWith('/') || destArg.endsWith('\\')) {
   if (fs.existsSync(dest) && fs.statSync(dest).isDirectory()) {
     fs.renameSync(src, path.join(dest, path.basename(src)));
+
+    process.exit(0);
   }
 
   console.error('IT / is in the then it should be folder');
