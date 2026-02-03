@@ -29,7 +29,15 @@ if (srcStat.isDirectory()) {
   process.exit(0);
 }
 
-if (fs.existsSync(dest) && fs.statSync(dest).isDirectory()) {
+if (destArg.endsWith('/') || destArg.endsWith('\\')) {
+  if (fs.existsSync(dest) && fs.statSync(dest).isDirectory()) {
+    fs.renameSync(src, path.join(dest, path.basename(src)));
+  }
+
+  console.error('IT / is in the then it should be folder');
+
+  process.exit(0);
+} else if (fs.existsSync(dest) && fs.statSync(dest).isDirectory()) {
   fs.renameSync(src, path.join(dest, path.basename(src)));
 } else {
   const destDir = path.dirname(dest);
