@@ -17,7 +17,6 @@ function main() {
   }
 
   const [source, destination] = args;
-
   const sourcePath = path.resolve(source);
 
   if (!fs.existsSync(sourcePath)) {
@@ -26,7 +25,6 @@ function main() {
     return;
   }
 
-  // ✅ source должен быть именно файлом
   try {
     const sourceStat = fs.statSync(sourcePath);
 
@@ -41,10 +39,8 @@ function main() {
     return;
   }
 
-  // destination может быть файлом (переименование) или директорией
   let destinationPath = path.resolve(destination);
 
-  // ✅ если одно и то же — ничего не делаем
   if (destinationPath === sourcePath) {
     return;
   }
@@ -54,20 +50,15 @@ function main() {
     const destinationIsDir =
       destinationExists && fs.statSync(destinationPath).isDirectory();
 
-    // ✅ по спекам “директория” может быть с хвостовым "/"
-    const endsWithSlash =
-      destination.endsWith('/') || destination.endsWith(path.sep);
+    const endsWithSlash = destination.endsWith('/');
 
     if (destinationIsDir || endsWithSlash) {
       if (!destinationExists || !destinationIsDir) {
         throw new Error('Destination directory does not exist');
       }
 
-      const fileName = path.basename(sourcePath);
+      destinationPath = path.join(destinationPath, path.basename(sourcePath));
 
-      destinationPath = path.join(destinationPath, fileName);
-
-      // если вдруг итоговый путь совпал с исходным — ничего не делаем
       if (destinationPath === sourcePath) {
         return;
       }
@@ -75,7 +66,6 @@ function main() {
 
     fs.renameSync(sourcePath, destinationPath);
   } catch (error) {
-    // ✅ ошибка должна быть видна тестам (stderr + non-zero exit)
     fail(error.message);
   }
 }
