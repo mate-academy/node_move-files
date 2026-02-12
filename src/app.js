@@ -4,7 +4,6 @@ const path = require('path');
 function fail(message) {
   // eslint-disable-next-line no-console
   console.error(message);
-  process.exitCode = 1;
 }
 
 function main() {
@@ -17,6 +16,7 @@ function main() {
   }
 
   const [source, destination] = args;
+
   const sourcePath = path.resolve(source);
 
   if (!fs.existsSync(sourcePath)) {
@@ -50,7 +50,8 @@ function main() {
     const destinationIsDir =
       destinationExists && fs.statSync(destinationPath).isDirectory();
 
-    const endsWithSlash = destination.endsWith('/');
+    const endsWithSlash =
+      destination.endsWith('/') || destination.endsWith(path.sep);
 
     if (destinationIsDir || endsWithSlash) {
       if (!destinationExists || !destinationIsDir) {
