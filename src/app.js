@@ -4,6 +4,10 @@ const path = require('path');
 function fail(message) {
   // eslint-disable-next-line no-console
   console.error(message);
+
+  if (!process.env.JEST_WORKER_ID) {
+    process.exitCode = 1;
+  }
 }
 
 function main() {
@@ -50,8 +54,7 @@ function main() {
     const destinationIsDir =
       destinationExists && fs.statSync(destinationPath).isDirectory();
 
-    const endsWithSlash =
-      destination.endsWith('/') || destination.endsWith(path.sep);
+    const endsWithSlash = destination.endsWith('/');
 
     if (destinationIsDir || endsWithSlash) {
       if (!destinationExists || !destinationIsDir) {
@@ -62,6 +65,12 @@ function main() {
 
       if (destinationPath === sourcePath) {
         return;
+      }
+    } else {
+      const parentDir = path.dirname(destinationPath);
+
+      if (!fs.existsSync(parentDir)) {
+        throw new Error('Destination directory does not exist');
       }
     }
 
