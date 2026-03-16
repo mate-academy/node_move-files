@@ -49,7 +49,7 @@ function moveFiles() {
 
     const parentDir = path.dirname(dest);
 
-    if (!fs.existsSync(parentDir)) {
+    if (!fs.existsSync(parentDir) || !fs.statSync(parentDir).isDirectory()) {
       console.error('Destination directory does not exist');
 
       return;
