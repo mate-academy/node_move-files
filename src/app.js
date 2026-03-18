@@ -18,7 +18,19 @@ async function move() {
   let finalPath;
 
   if (destPath.endsWith('/') || destPath.endsWith('\\')) {
-    finalPath = path.join(destPath, fileName);
+    try {
+      const stats = await fs.stat(destPath);
+
+      if (!stats.isDirectory()) {
+        throw new Error('Destination is not a directory!');
+      }
+
+      finalPath = path.join(destPath, fileName);
+    } catch (error) {
+      console.error(error);
+
+      return;
+    }
   } else {
     try {
       const stats = await fs.stat(destPath);
