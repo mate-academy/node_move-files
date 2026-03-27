@@ -6,18 +6,23 @@ function renameFile() {
 
   if (!oldPath || !newPath) {
     // eslint-disable-next-line no-console
-    console.error('Usage: node script.js <oldPath> <newPath>');
+    console.error('Please provide both source and destination.');
 
-    return;
-  }
-
-  if (oldPath === newPath) {
     return;
   }
 
   if (!fs.existsSync(oldPath)) {
     // eslint-disable-next-line no-console
-    console.error(`Source does not exist: ${oldPath}`);
+    console.error(`Source file does not exist: ${oldPath}`);
+
+    return;
+  }
+
+  const endsWithSlash = newPath.endsWith('/') || newPath.endsWith('\\');
+
+  if (endsWithSlash && !fs.existsSync(newPath)) {
+    // eslint-disable-next-line no-console
+    console.error(`Destination directory does not exist: ${newPath}`);
 
     return;
   }
@@ -29,23 +34,29 @@ function renameFile() {
 
     if (stats.isDirectory()) {
       finalDestination = path.join(newPath, path.basename(oldPath));
+    } else {
+      finalDestination = newPath;
     }
   } else {
     const parentDir = path.dirname(newPath);
 
     if (!fs.existsSync(parentDir)) {
       // eslint-disable-next-line no-console
-      console.error(`Destination directory does not exist: ${parentDir}`);
+      console.error(
+        `The directory for the new path does not exist: ${parentDir}`,
+      );
 
       return;
     }
+
+    finalDestination = newPath;
   }
 
   try {
     fs.renameSync(oldPath, finalDestination);
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error(`Error during rename: ${err.message}`);
+    console.error(`Operation failed: ${err.message}`);
   }
 }
 
