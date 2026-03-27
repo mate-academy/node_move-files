@@ -11,10 +11,17 @@ function renameFile() {
     return;
   }
 
-  if (!fs.existsSync(oldPath)) {
+if (!fs.existsSync(oldPath)) {
     // eslint-disable-next-line no-console
     console.error(`Source file does not exist: ${oldPath}`);
+    return;
+  }
 
+
+  const oldStats = fs.statSync(oldPath);
+  if (!oldStats.isFile()) {
+    // eslint-disable-next-line no-console
+    console.error(`Source path is not a file: ${oldPath}`);
     return;
   }
 
