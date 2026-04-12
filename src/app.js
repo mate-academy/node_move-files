@@ -1,4 +1,7 @@
 /* eslint-disable no-console */
+
+// something new
+
 function main() {
   const fs = require('fs');
   const path = require('path');
