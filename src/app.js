@@ -8,12 +8,14 @@ function main() {
 
   const [file, newFile] = process.argv.slice(2);
 
-  if (!fs.statSync(newFile).isFile()) {
-    throw new Error(`${file} must be a File`);
-  }
-
   if (!fs.existsSync(file)) {
     throw new Error(`${file} doesn't exist`);
+  }
+
+  const srcStats = fs.statSync(file);
+
+  if (!srcStats.isFile()) {
+    throw new Error(`${file} must be a File`);
   }
 
   const destExists = fs.existsSync(newFile);
