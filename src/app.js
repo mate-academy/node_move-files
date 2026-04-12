@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-// something new
+// something new x2
 
 function main() {
   const fs = require('fs');
