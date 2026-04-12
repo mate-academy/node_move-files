@@ -1,20 +1,19 @@
-/* eslint-disable no-console */
 function main() {
   const fs = require('fs');
   const path = require('path');
 
   if (process.argv.slice(2).length !== 2) {
-    console.error('Usage: node app.js <file> <newFile>');
-
-    return;
+    throw new Error('Usage: node app.js <file> <newFile>');
   }
 
   const [file, newFile] = process.argv.slice(2);
 
-  if (!fs.existsSync(file)) {
-    console.error(`${file} doesn't exist`);
+  if (!fs.statSync(newFile).isFile()) {
+    throw new Error(`${file} must be a File`);
+  }
 
-    return;
+  if (!fs.existsSync(file)) {
+    throw new Error(`${file} doesn't exist`);
   }
 
   const destExists = fs.existsSync(newFile);
@@ -24,9 +23,7 @@ function main() {
 
   if (newFile.endsWith('/')) {
     if (!destExists) {
-      console.error(`${newFile} doesn't exist`);
-
-      return;
+      throw new Error(`${newFile} doesn't exist`);
     }
 
     const newPath = path.join(newFile, fileName);
@@ -39,20 +36,13 @@ function main() {
   if (stats && stats.isDirectory()) {
     const newPath = path.join(newFile, fileName);
 
-    if (!fs.existsSync(parentDir)) {
-      console.error(`${newPath} doesn't exist`);
-
-      return;
-    }
     fs.renameSync(file, newPath);
 
     return;
   }
 
   if (!fs.existsSync(parentDir)) {
-    console.error(`Invalid destination path: ${newFile}`);
-
-    return;
+    throw new Error(`Invalid destination path: ${newFile}`);
   }
 
   fs.renameSync(file, newFile);
