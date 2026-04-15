@@ -29,7 +29,15 @@ const moveFile = () => {
   }
 
   try {
-    if (fs.existsSync(destinationPath)) {
+    if (destination[destination.length - 1] === '/') {
+      if (!fs.existsSync(destination)) {
+        console.error(`Destination directory does not exist: ${destination}`);
+
+        return;
+      } else {
+        fs.writeFileSync(path.join(destination, file), data);
+      }
+    } else if (fs.existsSync(destinationPath)) {
       const stats = fs.statSync(destinationPath);
 
       if (stats.isDirectory()) {
