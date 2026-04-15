@@ -29,13 +29,16 @@ const moveFile = () => {
   }
 
   try {
-    if (destination[destination.length - 1] === '/') {
+    if (destination.endsWith('/')) {
       if (!fs.existsSync(destination)) {
         console.error(`Destination directory does not exist: ${destination}`);
 
         return;
       } else {
-        fs.writeFileSync(path.join(destination, file), data);
+        fs.writeFileSync(
+          path.join(destinationPath, path.basename(sourcePath)),
+          data,
+        );
       }
     } else if (fs.existsSync(destinationPath)) {
       const stats = fs.statSync(destinationPath);
@@ -64,7 +67,7 @@ const moveFile = () => {
 
     fs.unlinkSync(sourcePath);
   } catch (err) {
-    console.error(err.message);
+    throw new Error(err.message);
   }
 };
 
