@@ -27,9 +27,7 @@ async function move() {
 
       finalPath = path.join(destPath, fileName);
     } catch (error) {
-      console.error(error);
-
-      return;
+      throw error;
     }
   } else {
     try {
