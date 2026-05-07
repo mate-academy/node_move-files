@@ -2,7 +2,7 @@
   "name": "node_move-files",
   "version": "1.0.0",
   "description": "Move files",
-  "main": "src/app.js",
+  "main": "index.js",
   "scripts": {
     "init": "mate-scripts init",
     "start": "mate-scripts start",
