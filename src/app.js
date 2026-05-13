@@ -10,7 +10,7 @@ const fsp = fs.promises;
 
   if (process.argv.length !== 4) {
     // eslint-disable-next-line no-console
-    console.error('Usage: node app.js <sourceFilePath> <destinationFilePath>');
+    console.error('Usage: node index <sourceFilePath> <destinationFilePath>');
 
     return;
   }
