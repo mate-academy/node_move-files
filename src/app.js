@@ -3,44 +3,24 @@
 const fs = require('fs/promises');
 const path = require('path');
 
-async function validateSource(source) {
-  const sourceStat = await fs.stat(source);
+async function setDestinationPath(sourcePath, destinationPath) {
+  const absoluteDestination = path.resolve(destinationPath);
 
-  if (!sourceStat.isFile()) {
-    throw new Error('Source is not a file');
-  }
-}
+  try {
+    const stats = await fs.stat(absoluteDestination);
 
-async function setDestinationPath(destination, source) {
-  let destinationPath;
-
-  if (destination.endsWith('/')) {
-    try {
-      const destinationStat = await fs.stat(destination);
-
-      if (!destinationStat.isDirectory()) {
-        throw new Error('Destination is not a directory');
-      }
-
-      destinationPath = path.join(destination, path.basename(source));
-    } catch (error) {
-      throw new Error('Destination path is invalid');
+    if (stats.isDirectory()) {
+      return path.join(absoluteDestination, path.basename(sourcePath));
     }
-  } else {
-    try {
-      const destinationStat = await fs.stat(destination);
 
-      if (destinationStat.isDirectory()) {
-        destinationPath = path.join(destination, path.basename(source));
-      } else {
-        destinationPath = destination;
-      }
-    } catch (error) {
-      destinationPath = destination;
+    return absoluteDestination;
+  } catch {
+    if (destinationPath.endsWith(path.sep)) {
+      throw new Error('Directory does not exist');
     }
-  }
 
-  return destinationPath;
+    return absoluteDestination;
+  }
 }
 
 async function main() {
@@ -54,28 +34,30 @@ async function main() {
   }
 
   const absoluteSource = path.resolve(source);
-  const absoluteDestination = path.resolve(destination);
 
-  if (absoluteSource === absoluteDestination) {
+  try {
+    await fs.access(absoluteSource);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('File does not exist');
+
     return;
   }
 
   try {
-    await validateSource(absoluteSource);
-  } catch (error) {
+    const normalizedDestination = await setDestinationPath(
+      absoluteSource,
+      destination,
+    );
+
+    if (absoluteSource === normalizedDestination) {
+      return;
+    }
+
+    await fs.rename(absoluteSource, normalizedDestination);
+  } catch (err) {
     // eslint-disable-next-line no-console
-    console.error('Error validating source file: ' + error.message);
-
-    return;
-  }
-
-  const destinationPath = await setDestinationPath(destination, absoluteSource);
-
-  try {
-    await fs.rename(absoluteSource, destinationPath);
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Error moving file: ' + error.message);
+    console.error(err);
   }
 }
 
