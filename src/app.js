@@ -18,6 +18,10 @@ function moveFile() {
       throw new Error('The specified source file does not exist.');
     }
 
+    if (!fs.statSync(source).isFile()) {
+      throw new Error('The specified source is not a file');
+    }
+
     let finalDestination = destination;
     const isDestinationEndingWithSlash =
       destination.endsWith('/') || destination.endsWith('\\');
@@ -41,7 +45,7 @@ function moveFile() {
 
         if (parentDirectory !== '.' && !fs.existsSync(parentDirectory)) {
           throw new Error(
-            'The parent directory for the specified destination not exist',
+            'The parent directory for the specified destination not exist.',
           );
         }
       }
