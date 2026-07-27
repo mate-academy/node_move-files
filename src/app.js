@@ -44,8 +44,8 @@ async function main() {
     }
 
     await rename(from, to);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
   }
 }
 
