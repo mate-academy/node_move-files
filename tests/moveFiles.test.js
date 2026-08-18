@@ -52,9 +52,14 @@ describe('File Move Tests', () => {
 
   describe('with two params', () => {
     test('if source file does not exist, should throw error', async() => {
-      const nonExistingFile = path.join(tempDir, faker.system.commonFileName('txt'));
+      const nonExistingFile = path.join(
+        tempDir,
+        faker.system.commonFileName('txt'),
+      );
 
-      const { stderr } = await execAsync(`${basePath} ${nonExistingFile} ${testFilePath}`);
+      const { stderr } = await execAsync(
+        `${basePath} ${nonExistingFile} ${testFilePath}`,
+      );
 
       expect(stderr.length).toBeGreaterThan(0);
     });
@@ -62,7 +67,9 @@ describe('File Move Tests', () => {
     test('should rename a file, if destination is a new filename', async() => {
       const newFilePath = path.join(tempDir, faker.lorem.word());
 
-      const { stderr } = await execAsync(`${basePath} ${testFilePath} ${newFilePath}`);
+      const { stderr } = await execAsync(
+        `${basePath} ${testFilePath} ${newFilePath}`,
+      );
 
       expect(stderr).toBeFalsy();
 
@@ -74,7 +81,9 @@ describe('File Move Tests', () => {
     });
 
     test('should do nothing if source and destination are the same', async() => {
-      const { stderr } = await execAsync(`${basePath} ${testFilePath} ${testFilePath}`);
+      const { stderr } = await execAsync(
+        `${basePath} ${testFilePath} ${testFilePath}`,
+      );
 
       const content = fs.readFileSync(testFilePath, 'utf-8');
 
@@ -85,7 +94,9 @@ describe('File Move Tests', () => {
 
     test('should move file, if passed destination is a file without extension', async() => {
       const newFilePath = path.join(tempDir, faker.lorem.word());
-      const { stderr } = await execAsync(`${basePath} ${testFilePath} ${newFilePath}`);
+      const { stderr } = await execAsync(
+        `${basePath} ${testFilePath} ${newFilePath}`,
+      );
 
       expect(stderr).toBeFalsy();
       expect(fs.existsSync(newFilePath)).toBe(true);
@@ -95,7 +106,9 @@ describe('File Move Tests', () => {
     test('should move file, if passed destination is a directory', async() => {
       fs.mkdirSync(testDir);
 
-      const { stderr } = await execAsync(`${basePath} ${testFilePath} ${testDir}`);
+      const { stderr } = await execAsync(
+        `${basePath} ${testFilePath} ${testDir}`,
+      );
 
       expect(stderr).toBeFalsy();
 
@@ -108,7 +121,11 @@ describe('File Move Tests', () => {
     });
 
     test('should throw error if destination directory does not exist', async() => {
-      const nonExistingDir = path.join(tempDir, 'nonExistingDir', faker.word.noun());
+      const nonExistingDir = path.join(
+        tempDir,
+        'nonExistingDir',
+        faker.word.noun(),
+      );
 
       const { stderr } = await execAsync(
         `${basePath} ${testFilePath} ${nonExistingDir}`
@@ -120,7 +137,11 @@ describe('File Move Tests', () => {
     });
 
     test('should throw error if destination is non-existed directory with fileName', async() => {
-      const nonExistingDir = path.join(tempDir, 'nonExistingDir', faker.word.noun());
+      const nonExistingDir = path.join(
+        tempDir,
+        'nonExistingDir',
+        faker.word.noun(),
+      );
 
       const { stderr } = await execAsync(
         `${basePath} ${testFilePath} ${nonExistingDir}`
