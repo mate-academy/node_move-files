@@ -16,18 +16,14 @@ function main() {
 
   let newPath = changeIN;
 
-  if (changeIN.endsWith('/')) {
-    if (!fs.existsSync(changeIN)) {
-      // eslint-disable-next-line no-console
-      console.error('Directory does not exist');
+  if (changeIN.endsWith('/') && !fs.existsSync(changeIN)) {
+    throw new Error('Directory does not exist');
+  }
 
-      return;
-    }
-
-    const fileName = path.basename(adresFile);
-
-    newPath = path.join(changeIN, fileName);
-  } else if (fs.existsSync(changeIN) && fs.statSync(changeIN).isDirectory()) {
+  if (
+    changeIN.endsWith('/') ||
+    (fs.existsSync(changeIN) && fs.statSync(changeIN).isDirectory())
+  ) {
     const fileName = path.basename(adresFile);
 
     newPath = path.join(changeIN, fileName);
