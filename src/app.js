@@ -11,13 +11,16 @@ function moveFile() {
       throw new Error('Please input 2 params');
     }
 
+    fs.statSync(originalFilePath).isFile();
+
     if (!fs.existsSync(originalFilePath)) {
       throw new Error(`Original path doesn't exist!`);
     }
 
     if (
       path.dirname(originalFilePath) === path.dirname(destinationPath) &&
-      !fs.existsSync(destinationPath)
+      !fs.existsSync(destinationPath) &&
+      !destinationPath.endsWith('/')
     ) {
       fs.rename(originalFilePath, destinationPath, function (error) {
         if (error) {
@@ -45,11 +48,9 @@ function moveFile() {
     }
 
     if (fs.statSync(destinationPath).isDirectory()) {
-      const fileName = originalFilePath.split('/');
-
       fs.rename(
         originalFilePath,
-        destinationPath + '/' + fileName[fileName.length - 1],
+        path.join(destinationPath, path.basename(originalFilePath)),
         function (error) {
           if (error) {
             throw new Error(`Couldn't move file`);
