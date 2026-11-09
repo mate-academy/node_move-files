@@ -4,63 +4,66 @@ const fs = require('fs');
 const path = require('path');
 
 function moveFile() {
-  const [originalFilePath, destinationPath] = process.argv.slice(2);
+  const args = process.argv.slice(2);
 
   try {
-    if (process.argv.length < 4) {
+    if (process.argv.length !== 4) {
       throw new Error('Please input 2 params');
     }
 
-    fs.statSync(originalFilePath).isFile();
+    const [originalFilePath, destinationPath] = args;
 
     if (!fs.existsSync(originalFilePath)) {
-      throw new Error(`Original path doesn't exist!`);
+      throw new Error("Original path doesn't exist!");
     }
 
-    if (
-      path.dirname(originalFilePath) === path.dirname(destinationPath) &&
-      !fs.existsSync(destinationPath) &&
-      !destinationPath.endsWith('/')
-    ) {
-      fs.rename(originalFilePath, destinationPath, function (error) {
-        if (error) {
-          throw new Error(`Couldn't move file`);
-        }
-      });
-
-      return;
+    if (!fs.statSync(originalFilePath).isFile()) {
+      throw new Error('Original path is not a file!');
     }
 
-    if (!fs.existsSync(path.dirname(destinationPath))) {
-      throw new Error(`Directory path doesn't exist`);
-    }
+    let finalDestination = destinationPath;
+    const endsWithSlash = destinationPath.endsWith('/');
 
-    try {
-      fs.statSync(destinationPath).isDirectory();
-    } catch (error) {
-      fs.rename(originalFilePath, destinationPath, function (err) {
-        if (err) {
-          throw new Error(`Couldn't move file`);
-        }
-      });
+    if (endsWithSlash) {
+      if (
+        !fs.existsSync(destinationPath) ||
+        !fs.statSync(destinationPath).isDirectory()
+      ) {
+        throw new Error("Directory path doesn't exist");
+      }
 
-      return;
-    }
-
-    if (fs.statSync(destinationPath).isDirectory()) {
-      fs.rename(
-        originalFilePath,
-        path.join(destinationPath, path.basename(originalFilePath)),
-        function (error) {
-          if (error) {
-            throw new Error(`Couldn't move file`);
-          }
-        },
+      finalDestination = path.join(
+        destinationPath,
+        path.basename(originalFilePath),
       );
+    } else if (
+      fs.existsSync(destinationPath) &&
+      fs.statSync(destinationPath).isDirectory()
+    ) {
+      finalDestination = path.join(
+        destinationPath,
+        path.basename(originalFilePath),
+      );
+    } else {
+      const parentDir = path.dirname(destinationPath);
+
+      if (
+        parentDir &&
+        parentDir !== '.' &&
+        (!fs.existsSync(parentDir) || !fs.statSync(parentDir).isDirectory())
+      ) {
+        throw new Error("Directory path doesn't exist");
+      }
     }
+
+    fs.rename(originalFilePath, finalDestination, (error) => {
+      if (error) {
+        throw new Error("Couldn't move file");
+      }
+    });
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(error);
+    console.error(error.message);
   }
 }
 
