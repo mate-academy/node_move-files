@@ -9,6 +9,10 @@ try {
     throw new Error('Missing arguments');
   }
 
+  if (!fs.statSync(sourcePath).isFile()) {
+    throw new Error('Source path is not a file');
+  }
+
   let destinationFilePath;
 
   if (
@@ -26,4 +30,5 @@ try {
   fs.renameSync(sourcePath, destinationFilePath);
 } catch (error) {
   console.error(error.message);
+  process.exitCode = 1;
 }
