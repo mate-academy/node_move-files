@@ -7,9 +7,7 @@ function moveFile() {
   const args = process.argv.slice(2);
 
   if (args.length !== 2) {
-    console.error('Expected 2 arguments');
-
-    return;
+    throw new Error('Expected 2 arguments');
   }
 
   const [source, destination] = args;
@@ -20,15 +18,17 @@ function moveFile() {
     return;
   }
 
+  if (!fs.statSync(source).isFile()) {
+    throw new Error('Source must be a file');
+  }
+
   const isEndWithSlash =
     destination.endsWith('/') || destination.endsWith('\\');
   let resultPath = destination;
 
   if (isEndWithSlash) {
     if (!fs.existsSync(destination)) {
-      console.error('The folder does not exist');
-
-      return;
+      throw new Error('The folder does not exist');
     }
 
     resultPath = path.join(destination, path.basename(source));
@@ -39,11 +39,11 @@ function moveFile() {
     resultPath = path.join(destination, path.basename(source));
   }
 
-  try {
-    fs.renameSync(source, resultPath);
-  } catch (error) {
-    console.error(error.message);
-  }
+  fs.renameSync(source, resultPath);
 }
 
-moveFile();
+try {
+  moveFile();
+} catch (error) {
+  console.error(error.message);
+}
