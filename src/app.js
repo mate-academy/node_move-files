@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
 
@@ -24,5 +25,5 @@ try {
 
   fs.renameSync(sourcePath, destinationFilePath);
 } catch (error) {
-  throw new Error(error.message);
+  console.error(error.message);
 }
