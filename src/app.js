@@ -1,4 +1,3 @@
-// write code here
 const fs = require('fs');
 const path = require('path');
 
@@ -25,5 +24,5 @@ try {
 
   fs.renameSync(sourcePath, destinationFilePath);
 } catch (error) {
-  console.error(error.message);
+  throw new Error(error.message);
 }
