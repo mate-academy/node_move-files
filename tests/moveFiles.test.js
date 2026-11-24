@@ -36,27 +36,37 @@ describe('File Move Tests', () => {
 
   describe('without params', () => {
     test('should throw error', async() => {
-      const { stderr } = await execAsync(basePath);
-
-      expect(stderr.length).toBeGreaterThan(0);
+      await expect(execAsync(basePath)).rejects.toMatchObject({
+        code: 1,
+        stderr: expect.stringMatching(/.+/),
+      });
     });
   });
 
   describe('with one param', () => {
     test('should throw error', async() => {
-      const { stderr } = await execAsync(`${basePath} ${testFilePath}`);
-
-      expect(stderr.length).toBeGreaterThan(0);
+      await expect(
+        execAsync(`${basePath} ${testFilePath}`)
+      ).rejects.toMatchObject({
+        code: 1,
+        stderr: expect.stringMatching(/.+/),
+      });
     });
   });
 
   describe('with two params', () => {
     test('if source file does not exist, should throw error', async() => {
-      const nonExistingFile = path.join(tempDir, faker.system.commonFileName('txt'));
+      const nonExistingFile = path.join(
+        tempDir,
+        faker.system.commonFileName('txt'),
+      );
 
-      const { stderr } = await execAsync(`${basePath} ${nonExistingFile} ${testFilePath}`);
-
-      expect(stderr.length).toBeGreaterThan(0);
+      await expect(
+        execAsync(`${basePath} ${nonExistingFile} ${testFilePath}`),
+      ).rejects.toMatchObject({
+        code: 1,
+        stderr: expect.stringMatching(/.+/),
+      });
     });
 
     test('should rename a file, if destination is a new filename', async() => {
@@ -110,11 +120,13 @@ describe('File Move Tests', () => {
     test('should throw error if destination directory does not exist', async() => {
       const nonExistingDir = path.join(tempDir, 'nonExistingDir', faker.word.noun());
 
-      const { stderr } = await execAsync(
-        `${basePath} ${testFilePath} ${nonExistingDir}`
-      );
+      await expect(
+        execAsync(`${basePath} ${testFilePath} ${nonExistingDir}`)
+      ).rejects.toMatchObject({
+        code: 1,
+        stderr: expect.stringMatching(/.+/),
+      });
 
-      expect(stderr.length).toBeGreaterThan(0);
       expect(fs.existsSync(nonExistingDir)).toBe(false);
       expect(fs.existsSync(testFilePath)).toBe(true);
     });
@@ -122,11 +134,13 @@ describe('File Move Tests', () => {
     test('should throw error if destination is non-existed directory with fileName', async() => {
       const nonExistingDir = path.join(tempDir, 'nonExistingDir', faker.word.noun());
 
-      const { stderr } = await execAsync(
-        `${basePath} ${testFilePath} ${nonExistingDir}`
-      );
+      await expect(
+        execAsync(`${basePath} ${testFilePath} ${nonExistingDir}`)
+      ).rejects.toMatchObject({
+        code: 1,
+        stderr: expect.stringMatching(/.+/),
+      });
 
-      expect(stderr.length).toBeGreaterThan(0);
       expect(fs.existsSync(nonExistingDir)).toBe(false);
       expect(fs.existsSync(testFilePath)).toBe(true);
     });
